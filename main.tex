@@ -206,99 +206,69 @@ Samadi et al.~\cite{samadi2008learning} used an Artificial Neural Network to lea
 
 
 
-% Option #1: Learning heuristics
+%Preliminary work by PI Stern proposed a framework called Probably Approximately Correct Heuristic Search (PAC Search) that allows using knowledge about optimal solutions of similar problems to obtain a probabilistic solution quality guarantees~\cite{stern2011probably,stern2012search}. 
+%That work, which built on earlier work by Ernandes and Gori~\cite{ernandes2004likely}, used statistics gathered from these optimal solutions to create for each generated state an estimate of the likelihood that it will improve on the incumbent solution. These likelihood estimates are used when a goal is found to compute the likelihood that it is optimal or approximately optimal. 
+%Knowing the likelihood that a given solution is approximately optimal has important applications. First, one can use such estimates to decide intelligently when a sufficient plan has been found and further planning is not needed. Second, one can report to the user that issued 
+%This estimate is derived from mining past optimal solutions to similar problems in the same domain. Thus, when a goal is found, one can compute the likelihood that it is optimal or approximately optimal. Beyond the theoretical elegance of having such guarantees, they can also be used to decide when a sufficient plan has been found and further planning is not needed.
+
+
+% Since planning and learning work so well together, we need to better understand this relationship
+Encouraged by the recent success stories of learning for planning, 
+we aim to provide a theoretical framework for incorporating knowledge from observed trajectories in the process of model-based planning. Such a framework is sourly needed in order to understand the extent to which trajectories can help to improve planning, as well as to understand how using learning-based heuristic affect the properties of the search algorithms that uses them. 
+
+
+% Option #1: PAC Search: what to do with trajectories? how many are useful?
 {\bf Probably Approximately Correct Heuristic Search.} 
-Encouraged by the recent success stories of learning for planning, we aim to provide a theoretical framework for using trajectories to improve such model-based planning. Such a framework is sourly needed in order to understand the extent to which trajectories can help to improve planning, as well as to understand how using learning-based heuristic affect the properties of the search algorithms that uses them. Preliminary work by PI Stern proposed a framework called Probably Approximately Correct Heuristic Search (PAC Search) that allows using past trajectories to have a probabilistic solution quality guarantees~\cite{stern2011probably,stern2012search}. Their work, which builds on earlier work by Ernandes and Gori~\cite{ernandes2004likely}, maintains for a given generated state an estimate of the likelihood that it will improve on the incumbent solution. This estimate is derived from mining past optimal solutions to similar problems in the same domain. Thus, when a goal is found, one can compute the likelihood that it is optimal or approximately optimal. Beyond the theoretical elegance of having such guarantees, they can also be used to decide when a sufficient plan has been found and further planning is not needed. 
+% Approximately optimal
+One particular theoretical framework we propose to develop is the Probably Approximately Correct Heuristic Search (PAC Search), which is intended to allow probabilistic solution quality guarantees even for deterministic planning~\cite{stern2011probably,stern2012search}. 
+To explain this framework, which was suggested in a preliminary work by PI Stern~\cite{stern2011probably,stern2012search}, we provide the following brief background. 
+Heuristic search is a fundamental problem solving technique that is commonly used to solve planning problems. Heuristic search algorithms use heuristics to efficiently explore a usually very large space of possible trajectories, aiming to find a trajectory that forms a sufficient plan. What regards as a sufficient plan depends on the requirements set by the user: in some cases only optimal -- lowest cost -- plans are sufficient while in other cases sub-optimal plans are also acceptable. Since finding optimal plans can be very difficult a common compromise is to require solutions that are {\em approximately optimal}, in the sense that a solution is sufficient if its cost is no larger than $1+\epsilon$ times the cost of the optimal solution, where $\epsilon$ is a parameter set by the user. Such algorithms are called {\em bounded-suboptimal search algorithms}. 
 
 
-In that preliminary study the PAC Search framework was only used to provide a better sense of the incumbent solution in an anytime search. However, many open questions are left to be studied. First, it is not known how many trajectories are needed to learn meaningful information about the likelihood of a state to lead to a goal. Second, the current PAC search algorithms require trajectories that are optimal plans. This limits the applicability of PAC search, since finding optimal plans can be very difficult. A core part of the proposed research will investigate these questions. 
+% Approximately optimal sucks
+To date, search algorithm that return approximately optimal are severely limited in that they obtain their solution quality guarantee (i.e., at most $1+\epsilon$ of optimal) by consider an {\em admissible} heuristic function. Admissible heuristic function are heuristic function that provide a lower bound on the cost of reaching the goal. By construction, such heuristic function are biased and tend to be inaccurate. Consequently, bounded suboptimal search algorithm often continue the search for better plans even though their incumbent plan (the best plan found so far) is already approximately optimal. In addition, they are limited in their ability to learn from observed trajectories~\cite{ees,egraphs}.
+
+% PAC is so great. It will make world peace. 
+The PAC search framework we propose to develop will allow planning algorithms based on heuristic search to fully exploit past experience and observations. In PAC search, which builds on earlier work by Ernandes and Gori~\cite{ernandes2004likely}, each generated state is associagted with an estimate of the likelihood that it will improve on the incumbent solution. This estimate is derived from mining past optimal solutions to similar problems in the same domain. Thus, when a goal is found, one can compute the likelihood that it is optimal or approximately optimal. Beyond the theoretical elegance of having such guarantees, they allow more informed decision making when planning. In particular, one can identify when a sufficient plan has been found earlier than when only using an admissible heuristic, thus significantly speeding up the search. Moreover, probabilistic solution quality guarantees 
+provide a more accurate view of the incumbent solution than the current worst-case quality estimate obtained when using admissible heuristics.  
 
 
+%In that preliminary study the PAC Search framework was only used to provide a better sense of the incumbent solution in an anytime search. 
 
-
-% Option #2: Find tractable classes
-{\bf Learning Tractable Classes for Planning}\\
-% Classical planning is hard, but we can solve many problems. How to know which one?
-While even classical planning is PSPACE complete~\cite{bylander1994computational}, 
-current state-of-the-art planners are able to solve relatively large problems with hundreds of state variables. This success is often attributed to effective heuristic functions and smart planning algorithms that use them. However, it is often the case that one does not know upfront whether a given planning problem will be easy to solve or hard using current planners. It is known that some classes of the planning problem can be solved optimally in polynomial time~\cite{katz2008new}. In addition, the complexity of planning is known to be related to various characteristics of the underlying planning problem, such as the size of the causal graph~\cite{gimenez2012influence}, its relation to the delete relaxation problem~\cite{hoffmann2011analyzing}, and the problem's width~\cite{lipovetzky2012width}. All these works analyze the underlying structure of a planning domain to recognize structures that the respective planning algorithm can solve effectively. %identify if it can be solved easily. %However, a general 
-
-% A key research question - can we learn from experience the tractable problems we can handle, and can we use experience to extend the range of tractable problems
-We propose to identify such tractable structures in the planning world in an automated way. This is based on the work of PI Juba~\cite{jmlrPaper?} on learning probably applicable 
-actions in a Partially Observable MDP setting. He proposed 
-an algorithm for learning from observed trajectories sequences of actions that are probably applicable and then, when applicable, use these sequence of actions to achieve planning goals. 
-In such cases, planning is almost instantaneously, and the probability of its success is bounded~\cite{jmlr}. 
-
-
-Transferring this idea to classical planning allows a principled way to learn {\em macro actions}. A macro action is a sequence of actions the agent can perform that are considered as a single action when planning. 
-Prior work has studies offline and online methods to learn sequence of actions that will be used in planning as macro action to speed up the search~\cite{}. A key challenge is how to choose which macro actions to define, since adding macro actions to the set of actions an agent considers when planning can be useful, as it allows reaching deeper states in the search space faster, but it can also be harmful, as adding them increases the branching factor and creates more transpositions. We will develop algorithms for appropriately choosing which sequence of actions should be macros that are based on the frequency of the observed trajectories, 
+% But there are so many challenges, you must give us money to study it
+While PI Stern's initial study of PAC search showed promising results~\cite{stern2011probably,stern2012search}, there are still many challenges that prevent it from gaining significant adoption and impact. First, current PAC search algorithms require trajectories that are optimal plans. This limits the applicability of PAC search, since finding optimal plans can be very difficult. We will study several ways to meet this challenge. One approach is it to gather statistics on smaller problems which can be solved optimally and extrapolate on larger problems. Another approach is to estimate the suboptimality of observed trajectories, e.g., using solution cost prediction algorithm, such as those developed by PI Stern~\cite{}. 
 
 
 
+% Second challenge - sample set
+A second challenge to the wide-spread adoption of PAC search, is that there is no clear guideline forhow many trajectories are needed to learn meaningful information about the likelihood of a state to lead to a goal. This is a manifestation of the classical sample set complexity problem that is often studied in the Machine Learning literature. Indeed, PI Juba has vast experience in performing such analysis and is thus the collaboration between the PIs is especially suitable to address these challenges. 
 
 
 
-By observing 
-sequences of actions (trajectories) performed by an agent 
+{\bf }
+TODO: Something about using trajectories to create macros in a smart way
 
-, in which he proposed a method for learning .... 
-%\note{Roni: Brendan -- maybe you can fill in the gap here?}
-\note{Discussion point \#1: detail out an approach for this. We can cache the observed trajectories, and use them as macro-actions. Perhaps we can learn some commonalities between parts of the trajectory, and then use experience graph search but only for cases where the start and goal share these commonalities. Also, what can we say theoretically here?}
-
+{\bf }
+TODO: Something about imperfect model
 
 
 
-GENERALIZE THE MACRO
-DEFINE STATIONARITY 
-PROBABLY PLANS
-
-HOW TO CONCATENATE SEQUENCES AND STILL HAVE GUARANTEES
-SOME RAPID MIXING ASSUMPTINO (GETTING TOT HE SAME START STATE DISTRIBUTIONS)
-
-
-% Option #2: Learn probable macros
-{\bf Learning Macros that will Probably Work.} 
-
-
-such macro actions, 
-which are added to the agent's set of actions when planning. 
-
-sequence of actions 
-
-
-to the set of actions an agent can perform
-Learning macro actions are known method for learning from trajectories how to improve planning~\cite{korf,others,chrpa2014mum}. 
-
-
-
-%\note{Maybe we want to talk here more about the partial model setting?}
-
-
-
-%, as well as understand the relative success of planning algorithms in some domains and their failure in others.  % Say more about our theoretical prospective achievements on this front
-\subsubsection{Planning with an Imperfect Model and Observations}
-
-In many other cases, having a complete model is not possible, e.g., due to the effort of creating such a model or due to the unexpected nature of the world. 
-A model can be incomplete in many ways. For example, there may be incomplete knowledge about the acting agent's actions, which includes only part of their pre-conditions and effects. Another example is the existence of exogenous events that are not represented in the model. Data -- observed trajectories -- can play a dual role in such cases of an incomplete model: as a source for speeding up planning as discussed above, and as a way to ``fill up'' the gap of the incomplete model, providing some indirect understanding of the unmodeled part of the world. 
-
-
-\note{Discussion point \#2: planning with an imperfect model}
-%We will study several types of {\em incomplete} models and how to use them in conjunction with a set of observed trajectories, to produce efficient plans. 
-
-FOCUS ON MISSING STATE VARIABLES (JMLR paper!)
-
-
-
-POMDP can be used, but it does not consider observations
-Here we use both POMDP and conisder observations
 
 
 
 
 \subsection{Model-and-Observations Reasoning for Diagnosis}
-Automated diagnosis (DX) is the second reasoning task for which we investigate how to exploit both model and observations. The task in automated diagnosis is to automatically find plausible explanations to an observed abnormally behaving system. Such explanations -- also referred to as {\em diagnoses} -- usually point to one or more components of the observed system that may be faulty. Several approaches have been proposed to solve the diagnosis problem. Two prominent approaches are {\em model-based diagnosis} (MBD) and {\em data-driven diagnosis}. 
+% What is diagnosis. It is important
+{\em Automated diagnosis} (DX) is the second reasoning task for which we investigate how to exploit both model and observations. The DX task is to find plausible explanations to an observed abnormally behaving system. Such explanations -- also referred to as {\em diagnoses} -- usually point to one or more components of the observed system that may be faulty. 
+Hardware and software systems these days are growing in complexity, and thus effective DX algorithms are crucial. 
 
-% MBD
-In MBD, a diagnosis problem is defined by the tuple $\tuple{SD, COMPS, OBS}$ 
+
+% Approaches for DX
+Several approaches have been proposed to solve the diagnosis problem. Two prominent approaches are {\em model-based} and {\em data-driven}. In both approaches some observations of the current behavior are given. In Model-Based Diagnosis (MBD), we are also given a model of the diagnosed system and inference techniques are used to infer diagnoses 
+
+
+that includes 
+a diagnosis problem is defined by the tuple $\tuple{SD, COMPS, OBS}$ 
 where $SD$ is a model of the diagnosed system, 
 $COMPS$ is a set of components, 
 and $OBS$ is a set of observations. 
@@ -307,8 +277,7 @@ Importantly, $OBS$ usually refers to the observations available on the systems c
 MBD has been successfully applied in a range of domains~\cite{williams96,struss2003model,wotawa2002model}, and lays on solid theoretical grounds~\cite{de1987diagnosing,reiter1987theory}. MBD has two key limitations. First, it requires a model of the system, which is expensive to create and is often inaccurate. Second, solving a diagnosis problem with MBD is, in terms of computational complexity, intractable~\cite{bylander1991computational}. 
 
 % Data driven is awsome, but dont' give guarantees and is bad for multiple faults.
-Data-driven diagnosis is an alternative to MBD in which no model of the diagnosed system is assumed. A data-driven diagnosis algorithm accepts as input a large set of such past observations. 
-Importantly, these observations differ from the MBD observations ($OBS$) described above 
+Data-driven diagnosis is an alternative to MBD in which no model of the diagnosed system is assumed. A data-driven diagnosis algorithm accepts as input a large set of such past observations. Importantly, these observations differ from the MBD observations ($OBS$) described above 
 in that they represent observations made in the past, and each observation is paired with the diagnosis that matchs it. With these observations, data-driven methods employ statistical techniques to learn an efficient function, e.g., a decision tree, that will map future observations to their correct diagnosis. This function is usually very fast, and thus using a data-driven approach for diagnosing is usually much faster than MBD. 
 Data-driven diagnosis lacks, however, formal guarantees to its correctness and performs poorly for observations with multiple faults~\cite{keren2011model}. 
 
