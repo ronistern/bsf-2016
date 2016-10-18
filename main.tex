@@ -166,62 +166,42 @@ In some sense, the observations represents some knowledge about {\em how the wor
 
 
 
-\subsection{Model-and-Observations Reasoning for Planning}
-
+\subsection{Data-Augmented Planning}
 
 % What is the model in planning
-In planning, the task is to create a plan for an agent to follow in order to achieve a designated goal. A model in the planning context is any information the agent has about the current state and how its actions impact the world. %In planning this is usually referred to as the {\em domain description}. 
-For example, in classical planning~\cite{fikes1971strips}, a model can be a description of the pre-conditions and effects of each action given in PDDL (the Planning Domain Description Language). In more involved planning models such as Markov Decision Processes (MDP) and Partially Observable MDPs, the model can also include the transition and observation functions that capture knowledge about the stochatic nature of the world. 
-%[[Roni: I think that to make things simpler lets focus on classical planning and then talk about how to generalize to MDP/POMDP
+In planning, the task is to create a plan for an agent to follow in order to achieve a designated goal. A model in the planning context is any information the agent has about the current state and how its actions impact the world. For example, in classical planning~\cite{fikes1971strips}, a model can be a description of the pre-conditions and effects of each action given in PDDL (the Planning Domain Description Language). In more involved planning models such as Markov Decision Processes (MDP) and Partially Observable MDPs, the model can also include the transition and observation functions that capture knowledge about the stochatic nature of the world. 
 
 
 % What are observations in planning
 Observations in the context of planning are {\em trajectories} of actions performed by the agent to get from one state to another. These trajectories as sequences of the form $\tuple{ s_1, a_1, s_2, a_2, \ldots}$, where $s_i$ is a state, $a_i$ is the action performed when at state $s_i$, and $s_{i+1}$ is the state the agent has reached after performing action $a_i$ at state $s_i$. In the most minimal sense observing a trajectory simply reveals that it was possible to get from state $s_i$ to state $s_{i+1}$ by applying action $a_i$. % Maybe talk about partial observablity?
 
 
-%of state and actions pairs, representing a state
-%and some (perhaps partial or inaccurate) view of the states reached by that agent when performing them. 
-
-
-% In the case of a complete model, we can find solutions, even optimal ones, but it will take forever. Mabye we can use a data-driven approach to overcome this?
-\subsubsection{Planning with a Complete Model and Observation}
-
-
-
 % Sometimes we have complete models, so we can plan. But it is still so hard!
-In some cases, a complete model of the world may provide a sufficient form of abstraction so that a plans generate for it are useful in practice~\cite{citeSomeApplicationsOfPDDLPlanning}. Indeed, much work has been devoted throughout the years on solving classical planning problems~\cite{someManyPlanningPapers}. A key challenge in such cases is the complexity of finding a plan, which is PSPACE hard in general~\cite{bylander1994computational} or worse. %cite some impossibility results of POMDP
-
+In some cases, a complete model of the world may provide a sufficient form of abstraction so that a plans generate for it are useful in practice~\cite{ruml2011line}. Indeed, much work has been devoted throughout the years on solving classical planning problems~\cite{ghallab2004automated,borgo2016planning}. A key challenge in such cases is the complexity of finding a plan, which is PSPACE hard in general~\cite{bylander1994computational} or worse. %cite some impossibility results of POMDP
 
 
 
 % We will use observations to help us plan faster!
-We propose to study two ways in which observations -- i.e., trajectories of actions performed by the agent in the past -- can help to meet this complexity challenge. The first is to use the given observations to evluate how different planning algorithms and heuristics perform, and adapt the planning algorithms accordingly. The second is to learn from the given observations special cases of the general planning problem that can be solved efficiently in the domain at hand. We detail both  approaches below. 
+We propose to study two ways in which observations -- i.e., trajectories of actions performed by the agent in the past -- can help to meet this complexity challenge. The first is to use the given observations to automatically evaluate how different planning algorithms and heuristics perform, and adapt the planning algorithms accordingly. The second is to learn from the given observations special cases of the general planning problem that can be solved efficiently in the domain at hand. We detail both  approaches below. 
 
 
 
 % Related work - learning is not new in planning
-Learning from trajectories how to plan more efficiently is not novel. 
-One particular approach is to use observed trajectories to learn accurate heuristic functions that estimate the distance to a goal better than traditional model-based heuristic functions. For example, Yoon et al.~\cite{yoon2006learning} proposed a method to learn from observed trajectories how to improve the FastForward heuristic function by considering various features of the relaxed plan it is based on. 
-Samadi et al.~\cite{samadi2008learning} used an Artificial Neural Network to learn heuristic functions for several search benchmarks and Jabbari Arfaee et al.~\cite{arfaee2011learning} proposed a bootstrapping techniques for doing so for larger state spaces. The Learning as search optimization (LaSO) approach uses learning in a different way, trying to learn in Beam Search which states are ``good'' (should stay on the beam) and which are ``bad'', instead of trying to learn the true distance to a goal~\cite{xu2007discriminative}. This was applied successfully to Beam search. Perhaps most closely related work is that of Phillips et al.~\cite{phillips2012graphs} proposed a bounded-suboptimal search algorithm that biases the search towards directions that are part of a given set of observed trajectories. All the above highlights the importance that the planning community gives to  finding novel and effective ways to incorporate knowledge about past data -- e.g., trajectories -- in the classical planning process. In fact, there is even a recently added track in the international planning competition is specifically dedicated to the combination of learning and plannning~\cite{fern2011first}. 
+%Learning from trajectories how to plan more efficiently is not novel. 
+Combining learning and planning is not novel. For example, the Learning as search optimization (LaSO) framework uses learning to identify which states are ``good'' and which are ``bad''
+in the context of Beam Search, where good states are those that should be expanded (i.e., stay in the beam) and bad states can be pruned~\cite{xu2007discriminative}. 
+Others have studies how to learn from past trajectories how to improve various planning heuristic such as Fast Forward~\cite{yoon2006learning} and Pattern Database~\cite{samadi2008learning}. Jabbari Arfaee et al.~\cite{arfaee2011learning} proposed a bootstrapping techniques for solving a set of problems in a large state space. 
+Phillips et al.~\cite{phillips2012graphs} proposed to build an {\em Experience Graph} (E-graph) that is a graph composed of a set of observed trajectories. Then, they proposed a planning algorithm that the search towards directions that are part of the E-graph. All the above highlights the importance that the planning community gives to  finding novel and effective ways to incorporate knowledge about past data -- e.g., trajectories -- in the classical planning process. In fact, there is even a recently added track in the international planning competition is specifically dedicated to the combination of learning and plannning~\cite{fern2011first}.  
 
 
-% Too weak. Need a stronger differential discussion
-
-
-
-%Preliminary work by PI Stern proposed a framework called Probably Approximately Correct Heuristic Search (PAC Search) that allows using knowledge about optimal solutions of similar problems to obtain a probabilistic solution quality guarantees~\cite{stern2011probably,stern2012search}. 
-%That work, which built on earlier work by Ernandes and Gori~\cite{ernandes2004likely}, used statistics gathered from these optimal solutions to create for each generated state an estimate of the likelihood that it will improve on the incumbent solution. These likelihood estimates are used when a goal is found to compute the likelihood that it is optimal or approximately optimal. 
-%Knowing the likelihood that a given solution is approximately optimal has important applications. First, one can use such estimates to decide intelligently when a sufficient plan has been found and further planning is not needed. Second, one can report to the user that issued 
-%This estimate is derived from mining past optimal solutions to similar problems in the same domain. Thus, when a goal is found, one can compute the likelihood that it is optimal or approximately optimal. Beyond the theoretical elegance of having such guarantees, they can also be used to decide when a sufficient plan has been found and further planning is not needed.
 
 
 % Since planning and learning work so well together, we need to better understand this relationship
-While the above recent success stories of learning for planning is encouraging, a theoretical framework for incorporating prior knowledge is still lacking. 
-We aim to close this gap and provide a theoretical framework for incorporating knowledge from observed trajectories in the process of model-based planning. Such a framework is sourly needed in order to understand the extent to which trajectories can help to improve planning, as well as to understand how using learning-based heuristic affect the properties of the search algorithms that uses them. 
+While the above recent success stories of learning for planning is encouraging, a theoretical framework for incorporating prior knowledge is still lacking. We aim to close this gap and provide a {\em theoretical framework for incorporating knowledge from observed trajectories in the process of model-based planning}. Such a framework is sourly needed in order to understand the extent to which trajectories can help to improve planning, as well as to understand how using learning-based heuristic affect the properties of the search algorithms that uses them. In addition, we propose concrete algorithms that will take advantage of this theory to plan more efficiently. 
 
 
 % Option #1: PAC Search: what to do with trajectories? how many are useful?
-{\bf Probably Approximately Correct Heuristic Search.} 
+\subsubsection{Probably Approximately Correct Heuristic Search} 
 % Approximately optimal
 One particular theoretical framework we propose to develop is the Probably Approximately Correct Heuristic Search (PAC Search), which is intended to allow probabilistic solution quality guarantees even for deterministic planning~\cite{stern2011probably,stern2012search}. 
 To explain this framework, which was suggested in a preliminary work by PI Stern~\cite{stern2011probably,stern2012search}, we provide the following brief background. 
@@ -244,21 +224,12 @@ While PI Stern's initial study of PAC search showed promising results~\cite{ster
 
 
 % Second challenge - sample set
-A second challenge to the wide-spread adoption of PAC search, is that there is no clear guideline forhow many trajectories are needed to learn meaningful information about the likelihood of a state to lead to a goal. This is a manifestation of the classical sample set complexity problem that is often studied in the Machine Learning literature. Indeed, PI Juba has vast experience in performing such analysis and is thus the collaboration between the PIs is especially suitable to address these challenges. 
-
-
-%{\bf }
-%TODO: Something about using trajectories to create macros in a smart way
-%{\bf }
-%TODO: Something about imperfect model
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-
+A second challenge to the wide-spread adoption of PAC search, is that there is no clear guideline forhow many trajectories are needed to learn meaningful information about the likelihood of a state to lead to a goal. This is a manifestation of the classical sample set complexity problem that is often studied in the Machine Learning literature. Indeed, PI Juba has vast experience in performing such analysis~\cite{BrendanCanYouPutHereSomeOfYourWork} and is thus the collaboration between the PIs is especially suitable to address these challenges. 
 
 
 % Option #2: Find tractable classes
-{\bf Learning Tractable Classes for Planning} % Classical planning is hard, but we can solve many problems. How to know which one?
+\subsubsection{Learning Tractable Classes for Planning}
+% Classical planning is hard, but we can solve many problems. How to know which one?
 While even classical planning is PSPACE complete~\cite{bylander1994computational}, 
 current state-of-the-art planners are able to solve relatively large problems with hundreds of state variables. This success is often attributed to effective heuristic functions and smart planning algorithms that use them. However, it is often the case that one does not know upfront whether a given planning problem will be easy to solve or hard using current planners. It is known that some classes of the planning problem can be solved optimally in polynomial time~\cite{katz2008new}. In addition, the complexity of planning is known to be related to various characteristics of the underlying planning problem, such as the size of the causal graph~\cite{gimenez2012influence}, its relation to the delete relaxation problem~\cite{hoffmann2011analyzing}, and the problem's width~\cite{lipovetzky2012width}. All these works analyze the underlying structure of a planning domain to recognize structures that the respective planning algorithm can solve effectively. %identify if it can be solved easily. %However, a general 
 
@@ -273,16 +244,15 @@ In such cases, planning is almost instantaneously, and the probability of its su
 Transferring this idea to classical planning allows a principled way to learn {\em macro actions}. A macro action is a sequence of actions the agent can perform that are considered as a single action when planning. Prior work has studies offline and online methods to learn sequence of actions that will be used in planning as macro action to speed up the search~\cite{chrpa2014mum,coles2007marvin,chrpa2015online,koedinger1990abstract,korf1985macro}. A key challenge is how to choose which macro actions to define, since adding macro actions to the set of actions an agent considers when planning can be useful, as it allows reaching deeper states in the search space faster, but it can also be harmful, as adding them increases the branching factor and creates more transpositions. We will develop algorithms for appropriately choosing which sequence of actions should be macros that are based on the frequency of the observed trajectories and the expected usefulness.  
 
 
-
-%By observing  sequences of actions (trajectories) performed by an agent 
-%, in which he proposed a method for learning .... 
-%\note{Roni: Brendan -- maybe you can fill in the gap here?}
-%\note{Discussion point \#1: detail out an approach for this. We can cache the observed trajectories, and use them as macro-actions. Perhaps we can learn some commonalities between parts of the trajectory, and then use experience graph search but only for cases where the start and goal share these commonalities. Also, what can we say theoretically here?}
-
-
+% We can generate all macros and their exact pre and post conditions
 There are well-known algorithms to identify all sequences of actions that occur sufficiently frequently in a collection of trajectories~\cite{mannila1997sequences}. The number of such candidate macro actions can be easily bounded by a polynomial in the frequency and the time horizon of the episodes. Because classical planning domains provide complete descriptions of the preconditions and effects of actions, we can easily generate a combined precondition and list of effects for each such candidate macro action.
 
-So, we can choose macro actions that would have been frequently useful in hindsight. The theoretical question that now arises is whether or not the macro actions we construct remain useful to the planner: Observe that even if the trajectories were generated by a fixed planning algorithm on problems drawn from a common distribution, and the planner continues to operate on problems drawn from the same distribution, the availability of new macro actions may cause the planner to include a macro action that is distinct from the action it would have used at a given point in a given plan. Then the trajectories generated by the planner may, for example, include states that would never have been visited by the planner that did not have the macro actions available, and the rest of the macro actions may no longer be useful in this new region of the state space. What we do know is that the macro actions correspond to sequences of actions that occurred frequently in our past trajectories. Intuitively, as long as the states in which the actions were taken were sufficiently ``typical,'' then we expect that the final state after executing the macro should also be relatively ``typical,'' and thus also expect that our estimates of the utility of our new macro actions should only be skewed by a limited amount, depending on just how typical the initial states were and how frequently the macros were used.
+% The question: how to choose effective macros
+The theoretical and practical question that arises is which macro actions to construct that will be most useful to the planner. 
+So, considering the observed trajectories, we can choose macro actions that would have been frequently useful in hindsight. 
+
+% The problem: the macro-enabled planner is modified, and who knows where it will end up in
+However, the theoretical challenge that now arises is whether or not the macro actions we construct remain useful to the problem in future problems: Observe that even if the trajectories were generated by a fixed planning algorithm on problems drawn from a common distribution, and the planner continues to operate on problems drawn from the same distribution, the availability of new macro actions may cause the planner to include a macro action that is distinct from the action it would have used at a given point in a given plan. Then the trajectories generated by the planner may, for example, include states that would never have been visited by the planner that did not have the macro actions available, and the rest of the macro actions may no longer be useful in this new region of the state space. What we do know is that the macro actions correspond to sequences of actions that occurred frequently in our past trajectories. Intuitively, as long as the states in which the actions were taken were sufficiently ``typical,'' then we expect that the final state after executing the macro should also be relatively ``typical,'' and thus also expect that our estimates of the utility of our new macro actions should only be skewed by a limited amount, depending on just how typical the initial states were and how frequently the macros were used.
 
 
 \note{Roni: The above is good. Mabye we can put some mathematical formalizm to better convince the reader. I will focus today on the MBD part below and then get back to this.}
@@ -301,9 +271,73 @@ So, we can choose macro actions that would have been frequently useful in hindsi
 
 
 
-%\note{Maybe we want to talk here more about the partial model setting?}
-%, as well as understand the relative success of planning algorithms in some domains and their failure in others.  % Say more about our theoretical prospective achievements on this front
-\subsubsection{Planning with an Imperfect Model and Observations}
+
+
+\subsection{Data-Augmented Model-Based Diagnosis}
+
+
+% What is diagnosis. It is important
+{\em Automated diagnosis} (DX) is the second reasoning task for which we investigate how to exploit both model and observations. The DX problem is to find plausible explanations to an observed abnormally behaving system. Such explanations -- also referred to as {\em diagnoses} -- usually point to one or more components of the observed system that may be faulty. 
+Hardware and software systems these days are growing in complexity, and thus effective DX algorithms are crucial. 
+
+
+% Model-based and data-driven for DX: different inputs
+Several approaches have been proposed to solve the DX problem. Two prominent approaches are {\em model-based} and {\em data-driven}. In both approaches some observations of the current behavior are given, denoted by $OBS$. In Model-Based Diagnosis (MBD), we are also given a model of the diagnosed system, which is assumed to describe how  components are expected to behave when functioning properly. In some cases a stronger model is given that also describes the possible behavior of the system components when they are faulty (possibility distinguishing between multiple fault modes). In data-driven diagnosis (DDD), instead of a model of the diagnosed system we are given a large set of such past observations. Importantly, these past observations differ from $OBS$ described above in that they represent observations made in the past. Moreover, each past observation is paired with its root cause -- the set of components that were faulty when that observation was taken. Observe that here too we have the same distinction as in planning -- the data-driven approach has information about how the world behaved in the past while the model-based approach has also knowledge about how the world is expected to behave in the future. 
+
+
+% Model-based and data-driven for DX: different algorithmic approaches
+MBD algorithms usually use inference methods to find diagnoses that will be consistent with both model and $OBS$. In contrast, DDD algorithms employ statistical techniques to learn an efficient function, e.g., a decision tree, that will map future observations to their correct diagnosis. 
+MBD has been successfully applied in a range of domains~\cite{williams96,struss2003model,wotawa2002model}, and lays on solid theoretical grounds~\cite{de1987diagnosing,reiter1987theory}. However, MBD has two key limitations. First, it requires a model of the system, which is expensive to create and is often inaccurate. Second, solving a diagnosis problem with MBD is, in terms of computational complexity, intractable~\cite{bylander1991computational}. Computing a diagnosis with DDD, on the other hand, is usually very fast as most effort is done offline during training. However, DDD algorithms lacks, however, formal guarantees to its correctness and performs poorly for observations with multiple faults~\cite{keren2011model}. 
+
+
+
+% We will use our complementing expertise to provide both useful algorithms as well as theory for using both sources of information. This will be awesome
+The fundamental tenant of our proposed research is that MBD and DDD should complement each other, as they use different types of inputs, and both types of inputs are often available, in some form. Therefore, we propose to develop theory and algorithms that exploit both model -- to the extent that it is available -- and data about past observations, in an effort to enjoy the pros of both approaches. Below we describe the concrete approaches we will follow in this line of research.
+
+% Focus on cases where the model is correct 
+First, we investigate how MBD and DDD can be integrated in scenarios where an accurate, even if incomplete models of the diagnosed system is available together with past observations. 
+
+
+\begin{figure}
+    \centering
+	%\includegraphics[width=0.6\columnwidth]{mbd-example.pdf}
+	\includegraphics[width=0.5\textwidth]{mbd-example_cropped.pdf}
+%    \includegraphics[width=0.75\textwidth]{mbd-example}
+    \caption{A simple example of a DX problem with multiple consistent diagnoses}
+    \label{fig:mbd-example}
+\end{figure}
+
+% The problem: too much diagnoses
+\subsubsection{Model-Based Reasoning with Data-Driven Prioritization} 
+Most MBD algorithms are consistency-based, in the sense that they aim to return every diagnosis  that is consistent with the system model and observations. 
+Unfortunately, there can be many consistent diagnoses for a given set of observations, thus providing poor fault isolation~\cite{stern2015many}. 
+For example, Figure~\ref{fig:mbd-example} shows a simple DX problem where the diagnosed system is a small Boolean circuit. Components $A$, $D$, $C$, and $E$ are NOT gates, component $B_1$ is an OR gate, and components $B_2$ and $B_3$ are buffer gate (which are supposed to output the same value as their input). One possible diagnosis is that component $B_1$ is faulty, and have outputted zero instead of one. Similarly, either component $B_2$ or $B_3$ may be faulty, 
+and there are also possible double fault diagnoses (i.e., diagnoses that assume two components are faulty): $\{ A,D \}$ and $\{C,E\}$. It is difficult to assess which of these five diagnoses is correct or more likely. 
+As shown in PI Stern's prior work, even if we only focus on minimal cardinality diagnoses (those with the smallest number of assumed faulty components) the number of possible diagnoses can be very large, even in standard MBD benchmarks~\cite{stern2015many}. Thus, MBD algorithms require some way to prioritize their results diagnoses. 
+
+
+% The solution: Bayesian reasoning. But that needs priors - DDD to save the day!!!
+This is exactly where we propose to employ a data-driven approach -- to prioritize and an informed way between consistent diagnoses. 
+DDD algorithms learn from past observations a function that classifies components as healthy or faulty given the current observations and other various model properties. These learned classification model often also provide some confidence measure that estimates the liklihood that the classification is correct. We propose to use this learned function in the diagnostic process to prioritize the consistent diagnoses. So, the resulting algorithm will be a combination of MBD algorithm for generating diagnoses and DDD algorithms to prioritize them. This hybrid model-and-data approach for MBD is very general, and our preliminary results on software diagnosis~\cite{elmishali2016data} show promising results. 
+
+% Future challenges
+We intend to formalize this data-augmented MBD approach and demonstrate its usefulness on a range of domains. Also, we will study the relation between the number of past observation we have, the size and structure of the analyzed system, and the expected usefulness of this data-augmented approach over the data-agnostic MBD approach. Since in many cases most past observations are of a healthy scenario and only few faulty scenarios are available, we will study how to build DDD models that can use mostly healthy scenarios and still be able to help in prioritizing diagnoses. An additional opportunity is to guide the MBD algorithm with knowledge from the DDD model. For example, MBD algorithms based on heursitic search, such as HA*~\cite{feldman2006two} and CDA*~\cite{williams2007conflict}, can guide their search towards adding earlier components that are more likely to be part of the diagnoses according to the DDD model. 
+
+
+%\note{I feel that we need more here. Maybe something about uncovering the theory behind this combination of data and model?}
+\subsubsection{Learning Plausible Diagnoses} 
+Similar to planning, there are also special case of MBD that can be solved in tractable time. This is acknowledged in the MBD literature, where some types of system models are known to be easy to diagnose~\cite{horn}. Also, several techniques have been proposed to compile a given system model to an easy-to-diagnose model such as Decomposable Negation Normal Form~\cite{darwiche2001decomposable} and Ordered Binary Decision Diagrams (OBDDs)~\cite{torta2006onTheUse}. These compilation methods, however, sometimes results in a model that is exponentially larger than the original system model. 
+
+We propose a general approach that makes use of past observations to identify easy-to-diagnose DX problems. The main idea is to identify classes of DX problems from past observations that one can learn a model to diagnose them. This circumvents the general problem of learning a DDD model, while provides fast and effective solutions to a meaningful subset of the cases. 
+PI Juba's recent work~\cite{juba2016aaai} outlined a theory for learning such special cases. However, no empirical support for the usefulness of this theory was given. In the proposed research we will demonstrate its usefulnes on standard diagnosis benchmarks (see the Evaluation section below). Moreover, the model being learnt
+
+\note{Roni: we should add here more challenges, along the lines of the type of models we can learn, the type of special case, the sample complexity of all this, the overall integration with MBD on top of this, etc.}
+
+
+
+\subsection{Data-Augmented Reasoning with an Incomplete Model}
+
+
 
 In many other cases, having a complete model is not possible, e.g., due to the effort of creating such a model or due to the unexpected nature of the world. 
 A model can be incomplete in many ways. For example, there may be incomplete knowledge about the acting agent's actions, which includes only part of their pre-conditions and effects. Another example is the existence of exogenous events that are not represented in the model. Data -- observed trajectories -- can play a dual role in such cases of an incomplete model: as a source for speeding up planning as discussed above, and as a way to ``fill up'' the gap of the incomplete model, providing some indirect understanding of the unmodeled part of the world. 
@@ -325,71 +359,20 @@ Here we use both POMDP and conisder observations
 
 
 
-
-
-\subsection{Model-and-Observations Reasoning for Diagnosis}
-% What is diagnosis. It is important
-{\em Automated diagnosis} (DX) is the second reasoning task for which we investigate how to exploit both model and observations. The DX problem is to find plausible explanations to an observed abnormally behaving system. Such explanations -- also referred to as {\em diagnoses} -- usually point to one or more components of the observed system that may be faulty. 
-Hardware and software systems these days are growing in complexity, and thus effective DX algorithms are crucial. 
-
-
-% Model-based and data-driven for DX: different inputs
-Several approaches have been proposed to solve the DX problem. Two prominent approaches are {\em model-based} and {\em data-driven}. In both approaches some observations of the current behavior are given, denoted by $OBS$. In Model-Based Diagnosis (MBD), we are also given a model of the diagnosed system, which is assumed to describe how  components are expected to behave when functioning properly. In some cases a stronger model is given that also describes the possible behavior of the system components when they are faulty (possibility distinguishing between multiple fault modes). In data-driven diagnosis (DDD), instead of a model of the diagnosed system we are given a large set of such past observations. Importantly, these past observations differ from $OBS$ described above in that they represent observations made in the past. Moreover, each past observation is paired with its root cause -- the set of components that were faulty when that observation was taken. Observe that here too we have the same distinction as in planning -- the data-driven approach has information about how the world behaved in the past while the model-based approach has also knowledge about how the world is expected to behave in the future. 
-
-
-% Model-based and data-driven for DX: different algorithmic approaches
-MBD algorithms usually use inference methods to find diagnoses that will be consistent with both model and $OBS$. In contrast, DDD algorithms employ statistical techniques to learn an efficient function, e.g., a decision tree, that will map future observations to their correct diagnosis. 
-MBD has been successfully applied in a range of domains~\cite{williams96,struss2003model,wotawa2002model}, and lays on solid theoretical grounds~\cite{de1987diagnosing,reiter1987theory}. However, MBD has two key limitations. First, it requires a model of the system, which is expensive to create and is often inaccurate. Second, solving a diagnosis problem with MBD is, in terms of computational complexity, intractable~\cite{bylander1991computational}. Computing a diagnosis with DDD, on the other hand, is usually very fast as most effort is done offline during training. However, DDD algorithms lacks, however, formal guarantees to its correctness and performs poorly for observations with multiple faults~\cite{keren2011model}. 
-
-
-
-% We will use our complementing expertise to provide both useful algorithms as well as theory for using both sources of information. This will be awesome
-The fundamental tenant of our proposed research is that MBD and DDD should complement each other, as they use different types of inputs, and both types of inputs are often available, in some form. Therefore, we propose to develop theory and algorithms that exploit both model -- to the extent that it is available -- and data about past observations, in an effort to enjoy the pros of both approaches. Below we describe the concrete approaches we will follow in this line of research.
-
-\subsubsection{Diagnosis with an Accurate Model and Past Observations}
-First, we investigate how MBD and DDD can be integrated in scenarios where an accurate, even if incomplete models of the diagnosed system is available together with past observations. 
-
-
-\begin{figure}
-    \centering
-	%\includegraphics[width=0.6\columnwidth]{mbd-example.pdf}
-	\includegraphics[width=0.5\textwidth]{mbd-example_cropped.pdf}
-%    \includegraphics[width=0.75\textwidth]{mbd-example}
-    \caption{A simple example of a DX problem with multiple consistent diagnoses}
-    \label{fig:mbd-example}
-\end{figure}
-
-% The problem: too much diagnoses
-{\bf Model-Based Reasoning with Data-Driven Prioritization.} 
-Most MBD algorithms are consistency-based, in the sense that they aim to return every diagnosis  that is consistent with the system model and observations. 
-Unfortunately, there can be many consistent diagnoses for a given set of observations, thus providing poor fault isolation~\cite{stern2015many}. 
-For example, Figure~\ref{fig:mbd-example} shows a simple DX problem where the diagnosed system is a small Boolean circuit. Components $A$, $D$, $C$, and $E$ are NOT gates, component $B_1$ is an OR gate, and components $B_2$ and $B_3$ are buffer gate (which are supposed to output the same value as their input). One possible diagnosis is that component $B_1$ is faulty, and have outputted zero instead of one. Similarly, either component $B_2$ or $B_3$ may be faulty, 
-and there are also possible double fault diagnoses (i.e., diagnoses that assume two components are faulty): $\{ A,D \}$ and $\{C,E\}$. It is difficult to assess which of these five diagnoses is correct or more likely. 
-As shown in PI Stern's prior work, even if we only focus on minimal cardinality diagnoses (those with the smallest number of assumed faulty components) the number of possible diagnoses can be very large, even in standard MBD benchmarks~\cite{stern2015many}. Thus, MBD algorithms require some way to prioritize their results diagnoses. 
-
-
-% The solution: Bayesian reasoning. But that needs priors - DDD to save the day!!!
-This is exactly where we propose to employ a data-driven approach -- to prioritize and an informed way between consistent diagnoses. 
-DDD algorithms learn from past observations a function that classifies components as healthy or faulty given the current observations and other various model properties. These learned classification model often also provide some confidence measure that estimates the liklihood that the classification is correct. We propose to use this learned function in the diagnostic process to prioritize the consistent diagnoses. So, the resulting algorithm will be a combination of MBD algorithm for generating diagnoses and DDD algorithms to prioritize them. This hybrid model-and-data approach for MBD is very general, and our preliminary results on software diagnosis~\cite{elmishali2016data} show promising results. 
-
-% Future challenges
-We intend to formalize this data-augmented MBD approach and demonstrate its usefulness on a range of domains. Also, we will study the relation between the number of past observation we have, the size and structure of the analyzed system, and the expected usefulness of this data-augmented approach over the data-agnostic MBD approach. Since in many cases most past observations are of a healthy scenario and only few faulty scenarios are available, we will study how to build DDD models that can use mostly healthy scenarios and still be able to help in prioritizing diagnoses. An additional opportunity is to guide the MBD algorithm with knowledge from the DDD model. For example, MBD algorithms based on heursitic search, such as HA*~\cite{feldman2006two} and CDA*~\cite{williams2007conflict}, can guide their search towards adding earlier components that are more likely to be part of the diagnoses according to the DDD model. 
-
-
-%\note{I feel that we need more here. Maybe something about uncovering the theory behind this combination of data and model?}
-{\bf Learning Plausible Diagnoses.} Similar to planning, there are also special case of MBD that can be solved in tractable time. This is acknowledged in the MBD literature, where some types of system models are known to be easy to diagnose~\cite{horn}. Also, several techniques have been proposed to compile a given system model to an easy-to-diagnose model such as Decomposable Negation Normal Form~\cite{darwiche2001decomposable} and Ordered Binary Decision Diagrams (OBDDs)~\cite{torta2006onTheUse}. These compilation methods, however, sometimes results in a model that is exponentially larger than the original system model. 
-
-We propose a general approach that makes use of past observations to identify easy-to-diagnose DX problems. The main idea is to identify classes of DX problems from past observations that one can learn a model to diagnose them. This circumvents the general problem of learning a DDD model, while provides fast and effective solutions to a meaningful subset of the cases. 
-PI Juba's recent work~\cite{juba2016aaai} outlined a theory for learning such special cases. However, no empirical support for the usefulness of this theory was given. In the proposed research we will demonstrate its usefulnes on standard diagnosis benchmarks (see the Evaluation section below). Moreover, the model being learnt
-
-\note{Roni: we should add here more challenges, along the lines of the type of models we can learn, the type of special case, the sample complexity of all this, the overall integration with MBD on top of this, etc.}
-
 %Learn conditions on sensors taht yield a small set of possbile diagnoses (see AAAI paper)
 
 \subsubsection{Diagnosis with an Inaccurate Model and Past Observations}
-
+\note{Warning: drafts below!}
 BN 
 CPTs
+
+
+% Related work
+
+Dexter and Benouarets~\cite{dexter1997model} proposed a model-based algorithm for fault detection and diagnosis that is designed for cases where one has an inaccurate model. Their algorithm identifies faulty components using fuzzy matching, comparing the observations against several fuzzy reference models. 
+
+There is also a line of work on {\em robust fault detection and isolation} (robust FDI)~\cite{chen2012robust} that is specifically designed to develop fault detection and diagnosis algorithm that are robust to inaccuracies in the underlying system model. The main approach there is to try to model the errors derived from the inaccuracies of the model. In contrast, we 
+
 
 
 
