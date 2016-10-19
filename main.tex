@@ -48,6 +48,8 @@
 
 \section{Scientific and Technological Background}
 % 1. From BSF guidelines: A brief description of the subject and the scientific and technological background;
+\note{Roni: this section needs a makeover once the methodology section is completed -- removing the plan recognition and leaving better clues for the rest of the work}
+
 
 % Reasoning is really important. Example of reasoniong for planning, diagnosis, and plan recognition
 {\bf Reasoning} is ``the process of thinking about something in a logical way in order to form a conclusion or judgment''~\cite{reasoning2016dictionary}, and is commonly attributed as a task that requires some intelligence. Indeed, much of the Artificial Intelligence (AI) research has been devoted to developing methods for reasoning, and effective reasoning is at the heart of classical AI tasks such as planning, diagnosis, and plan recognition. When planning, one needs to reason about possible future actions it may take in order to achieve a desired goal. When diagnosing, one needs to reason about possible explanations to an abnormally behaving systems. Plan recognition can be viewed as a merge of diagnosis and planning: one needs to reason about possible plans an other agent is performing. Indeed, all of these tasks, which are at the core of many AI algorithms and systems, require some form of reasoning.  
@@ -134,6 +136,29 @@ Moreover, each of the PIs has preliminary work that demonstrate the potential of
 %\subsection{Background on Data-Augemented Reasoning}
 %TODO: Talk here about prior work that combined model-based and data-driven approaches.  This will include our works, but also, of course, others. In particular, I think that model-based reenforcement learning works need to be mentioned. 
 
+\subsection{Learning in Classical Planning}
+% Related work - learning is not new in planning
+%Learning from trajectories how to plan more efficiently is not novel. 
+Combining learning and planning is not novel. For example, the Learning as search optimization (LaSO) framework uses learning to identify which states are ``good'' and which are ``bad''
+in the context of Beam Search, where good states are those that should be expanded (i.e., stay in the beam) and bad states can be pruned~\cite{xu2007discriminative}. 
+Others have studies how to learn from past trajectories how to improve various planning heuristic such as Fast Forward~\cite{yoon2006learning} and Pattern Database~\cite{samadi2008learning}. Jabbari Arfaee et al.~\cite{arfaee2011learning} proposed a bootstrapping techniques for solving a set of problems in a large state space. 
+Phillips et al.~\cite{phillips2012graphs} proposed to build an {\em Experience Graph} (E-graph) that is a graph composed of a set of observed trajectories. Then, they proposed a planning algorithm that the search towards directions that are part of the E-graph. All the above highlights the importance that the planning community gives to  finding novel and effective ways to incorporate knowledge about past data -- e.g., trajectories -- in the classical planning process. In fact, there is even a recently added track in the international planning competition is specifically dedicated to the combination of learning and plannning~\cite{fern2011first}.  
+
+
+
+
+% Since planning and learning work so well together, we need to better understand this relationship
+While the above recent success stories of learning for planning is encouraging, a theoretical framework for incorporating prior knowledge is still lacking. We aim to close this gap and provide a {\em theoretical framework for incorporating knowledge from observed trajectories in the process of model-based planning}. Such a framework is sourly needed in order to understand the extent to which trajectories can help to improve planning, as well as to understand how using learning-based heuristic affect the properties of the search algorithms that uses them. In addition, we propose concrete algorithms that will take advantage of this theory to plan more efficiently. 
+
+
+\subsection{Reinforcement Learning}
+\note{Roni: Brendan, can you put here how we are different from standard reinforcement learning? 
+I read the JMLR related work section again, but think it will still be better if you put here
+how it is different.}
+
+
+\subsection{Learning in Diagnosis}
+\note{Roni: TODO me}
 
 \section{Objectives and Significance}
 %2. From BSF guidelines: Objectives and significance of the research
@@ -161,8 +186,7 @@ if sufficient data is available, in order to speedup the reasoning process.
 
 % Key setting: we have a model and observations
 The main setting the proposed research will focus on is that we are given two types of data as input: 
-a {\em model} and a set of {\em observations}. The model represents some prior knowledge about the rules that govern the behavior of the world. The observations represents data collected about some  interactions with the world in the past. 
-In some sense, the observations represents some knowledge about {\em how the world behaved in the past} and the model also represents knowledge about {\em how the world is expected to behave in the future}. What exactly does these model and observations comprise depends on the reasoning task at hand. In the proposed research we focus on reasoning for three classical AI tasks: planning, diagnosis, and plan recognition. %We describe first our proposed research on model-and-data reasoning for the planning tasks. 
+a {\em model} and a set of {\em observations}. The model represents some prior knowledge about the rules that govern the behavior of the world. The observations represents data collected about some  interactions with the world in the past. In some sense, the observations represents some knowledge about {\em how the world behaved in the past} and the model also represents knowledge about {\em how the world is expected to behave in the future}. What exactly does these model and observations comprise depends on the reasoning task at hand. In the proposed research we focus on reasoning for two classical AI tasks: planning and diagnosis. 
 
 
 
@@ -186,18 +210,6 @@ We propose to study two ways in which observations -- i.e., trajectories of acti
 
 
 
-% Related work - learning is not new in planning
-%Learning from trajectories how to plan more efficiently is not novel. 
-Combining learning and planning is not novel. For example, the Learning as search optimization (LaSO) framework uses learning to identify which states are ``good'' and which are ``bad''
-in the context of Beam Search, where good states are those that should be expanded (i.e., stay in the beam) and bad states can be pruned~\cite{xu2007discriminative}. 
-Others have studies how to learn from past trajectories how to improve various planning heuristic such as Fast Forward~\cite{yoon2006learning} and Pattern Database~\cite{samadi2008learning}. Jabbari Arfaee et al.~\cite{arfaee2011learning} proposed a bootstrapping techniques for solving a set of problems in a large state space. 
-Phillips et al.~\cite{phillips2012graphs} proposed to build an {\em Experience Graph} (E-graph) that is a graph composed of a set of observed trajectories. Then, they proposed a planning algorithm that the search towards directions that are part of the E-graph. All the above highlights the importance that the planning community gives to  finding novel and effective ways to incorporate knowledge about past data -- e.g., trajectories -- in the classical planning process. In fact, there is even a recently added track in the international planning competition is specifically dedicated to the combination of learning and plannning~\cite{fern2011first}.  
-
-
-
-
-% Since planning and learning work so well together, we need to better understand this relationship
-While the above recent success stories of learning for planning is encouraging, a theoretical framework for incorporating prior knowledge is still lacking. We aim to close this gap and provide a {\em theoretical framework for incorporating knowledge from observed trajectories in the process of model-based planning}. Such a framework is sourly needed in order to understand the extent to which trajectories can help to improve planning, as well as to understand how using learning-based heuristic affect the properties of the search algorithms that uses them. In addition, we propose concrete algorithms that will take advantage of this theory to plan more efficiently. 
 
 
 % Option #1: PAC Search: what to do with trajectories? how many are useful?
@@ -234,8 +246,8 @@ While even classical planning is PSPACE complete~\cite{bylander1994computational
 current state-of-the-art planners are able to solve relatively large problems with hundreds of state variables. This success is often attributed to effective heuristic functions and smart planning algorithms that use them. However, it is often the case that one does not know upfront whether a given planning problem will be easy to solve or hard using current planners. It is known that some classes of the planning problem can be solved optimally in polynomial time~\cite{katz2008new}. In addition, the complexity of planning is known to be related to various characteristics of the underlying planning problem, such as the size of the causal graph~\cite{gimenez2012influence}, its relation to the delete relaxation problem~\cite{hoffmann2011analyzing}, and the problem's width~\cite{lipovetzky2012width}. All these works analyze the underlying structure of a planning domain to recognize structures that the respective planning algorithm can solve effectively. %identify if it can be solved easily. %However, a general 
 
 % A key research question - can we learn from experience the tractable problems we can handle, and can we use experience to extend the range of tractable problems
-We propose to identify such tractable structures in the planning world in an automated way. This is based on the work of PI Juba~\cite{juba2016jmlr} on learning probably applicable 
-actions in a Partially Observable MDP setting. He proposed 
+We propose to identify such tractable, or probably tractable, structures in the planning world in an automated way. This is based on the work of PI Juba on learning probably applicable 
+actions in a Partially Observable MDP setting~\cite{juba2016jmlr}. He proposed 
 an algorithm for learning from observed trajectories sequences of actions that are probably applicable and then, when applicable, use these sequence of actions to achieve planning goals. 
 In such cases, planning is almost instantaneously, and the probability of its success is bounded~\cite{juba2016jmlr}. 
 
@@ -335,12 +347,30 @@ PI Juba's recent work~\cite{juba2016aaai} outlined a theory for learning such sp
 
 
 
+
 \subsection{Data-Augmented Reasoning with an Incomplete Model}
 
+% Incomplete models is important
+In many cases, having a complete model is not possible, e.g., due to the effort of creating such a model or due to the unexpected nature of the world. A model can be incomplete in many ways. For example, in planning there may be incomplete knowledge about the acting agent's actions, which includes only part of their pre-conditions and effects. Another example is the existence of exogenous events that are not represented in the model. 
+
+% Observations are very important for incomplete models 
+Data about observed trajectories can play several roles in such cases of an incomplete model: as a means for learning the incomplete parts of the model, as a way to estimate which parts of the reasoning state space can be reasoned about with reasonable certainty, 
+and finally, as a source for speeding up planning as discussed above. 
+
+% This is well-known, but lacking good theory to decide how to reason
+While work on reasoning with incomplete models and observations has been discussed ... \note{Roni: we need some strong arguments against what's been done}
 
 
-In many other cases, having a complete model is not possible, e.g., due to the effort of creating such a model or due to the unexpected nature of the world. 
-A model can be incomplete in many ways. For example, there may be incomplete knowledge about the acting agent's actions, which includes only part of their pre-conditions and effects. Another example is the existence of exogenous events that are not represented in the model. Data -- observed trajectories -- can play a dual role in such cases of an incomplete model: as a source for speeding up planning as discussed above, and as a way to ``fill up'' the gap of the incomplete model, providing some indirect understanding of the unmodeled part of the world. 
+We propose to address this setting by using Valiant's PAC semantics~\cite{valiant2000robustLogics}, a particular theoretical framework that is exactly aimed to bridge the gap between having observations to learn from and learning an incomplete and only probably correct model. We will develop concrete algorithms able to perform reasoning tasks -- and in particular planning and diagnosis -- using an underlying PAC semantic knowledge base. 
+
+\note{Roni: something about how PAC semantic are great in balancing knowledge}
+
+
+
+
+
+
+``filling up'' the gap of the incomplete model by learning the missing , providing some indirect understanding of the unmodeled part of the world. 
 
 
 \note{Discussion point \#2: planning with an imperfect model. Need to think hard about the relation with reinforcement learning, to see we do not step on tredded grounds.}
