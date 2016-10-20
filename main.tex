@@ -366,6 +366,10 @@ We propose to address this setting by using Valiant's PAC semantics~\cite{valian
 \note{Roni: something about how PAC semantic are great in balancing knowledge}
 
 
+\note{Brendan, does the paragraph below make sense?}
+A PAC semantic rule for planning translates to an action the planning agent can perform, and the error function of the rule corresponds to probability that the action preconditions and effects are true, i.e., wheher the action is applicable and will have its desired effect. 
+
+
 \subsubsection{Learning PAC Semantic Rules for Planning}
 \note{Roni: TODO: Brendan?}
 
@@ -376,29 +380,20 @@ Problems:
 3. Trasportability
 
 \subsubsection{Planning with PAC Semantic Rules}
-\note{Roni: TODO: Roni?}
-
-Problems:
-1. Modifying planners to take it into consideration
 
 
+% Having PAC rules is not the end of the problem. No one has used them for planning or diagnosis
+After learning a set of rules for planning, there is still the task of actually generating the plan. PAC semantic have been designed explicitly to enable efficient reasoning~\cite{valiant2000robustLogics}. However, they have been applied so far to a limited set of reasoning tasks such as prediction of missing words in text~\cite{michael2008first} and user profiling in a recommender system~\cite{semeraro2009knowledge}. With the the exception of the preliminary work of PI Juba~\cite{juba2016aaai,juba2016jmlr}, PAC semantic rules have not been used to neither planning nor diagnosis, two fundamental AI reasoning tasks. We aim to do so in the proposed research. 
 
 
+% Planning with PAC rules is not trivial
+Planning with PAC semantic rules raises several challenges and opens several possible types of planning problems.
+Since every planned action may not have its desired effect (since the learned rules are only probably approxiamtely correct)
+then one may wish to generate a plan that will achieve the goal with some amount of certaintly. 
+Alternatively, one may wish to generate a plan that is most likely to acheive the goal, 
+while others may devise some tradeoff between the plan's cost (sum of action costs) and its probability of success. 
+Solving these planning problems is a main objective of the proposed research. 
 
-
-
-``filling up'' the gap of the incomplete model by learning the missing , providing some indirect understanding of the unmodeled part of the world. 
-
-
-\note{Discussion point \#2: planning with an imperfect model. Need to think hard about the relation with reinforcement learning, to see we do not step on tredded grounds.}
-%We will study several types of {\em incomplete} models and how to use them in conjunction with a set of observed trajectories, to produce efficient plans. 
-
-FOCUS ON MISSING STATE VARIABLES (JMLR paper!)
-
-
-POMDP can be used, but it does not consider observations
-Here we use both POMDP and conisder observations
-\note{Roni: But there are works on POMDP that do consider observations. Specifically, there's work by Guy Shani on "Model-Based Online Learning of POMDPs". I talked with him today (he is in my department) and it was not clear to him the difference. I'll think more about it. Anyhow, he agreed to write a letter of support for the proposal, which I guess can never hurt}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
