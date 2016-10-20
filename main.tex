@@ -21,6 +21,8 @@
 \newcommand{\note}[1]{\textbf{\textit{#1}}}
 \newcommand{\astar}{A$^*$}
 \newcommand{\tuple}[1]{\ensuremath{\left \langle #1 \right \rangle }}
+\newcommand{\eff}{\textit{eff}}
+\newcommand{\pre}{\textit{pre}}
 
 \newtheorem{theorem}{Theorem}
 \newtheorem{observation}{Observation}
@@ -142,7 +144,11 @@ Moreover, each of the PIs has preliminary work that demonstrate the potential of
 Combining learning and planning is not novel. For example, the Learning as search optimization (LaSO) framework uses learning to identify which states are ``good'' and which are ``bad''
 in the context of Beam Search, where good states are those that should be expanded (i.e., stay in the beam) and bad states can be pruned~\cite{xu2007discriminative}. 
 Others have studies how to learn from past trajectories how to improve various planning heuristic such as Fast Forward~\cite{yoon2006learning} and Pattern Database~\cite{samadi2008learning}. Jabbari Arfaee et al.~\cite{arfaee2011learning} proposed a bootstrapping techniques for solving a set of problems in a large state space. 
-Phillips et al.~\cite{phillips2012graphs} proposed to build an {\em Experience Graph} (E-graph) that is a graph composed of a set of observed trajectories. Then, they proposed a planning algorithm that the search towards directions that are part of the E-graph. All the above highlights the importance that the planning community gives to  finding novel and effective ways to incorporate knowledge about past data -- e.g., trajectories -- in the classical planning process. In fact, there is even a recently added track in the international planning competition is specifically dedicated to the combination of learning and plannning~\cite{fern2011first}.  
+Phillips et al.~\cite{phillips2012graphs} proposed to build an {\em Experience Graph} (E-graph) that is a graph composed of a set of observed trajectories. Then, they proposed a planning algorithm that the search towards directions that are part of the E-graph. 
+Similar efforts were done in the context of local search, 
+where Griener~\cite{greiner1996palo} proposed to learn
+the landscape of the objective function in order to get a probabilistic guarantee over the likelihood that a local optimum have been reached. 
+All the above highlights the importance that the planning community gives to  finding novel and effective ways to incorporate knowledge about past data -- e.g., trajectories -- in the classical planning process. In fact, there is even a recently added track in the international planning competition is specifically dedicated to the combination of learning and plannning~\cite{fern2011first}.  
 
 
 
@@ -224,7 +230,7 @@ Heuristic search is a fundamental problem solving technique that is commonly use
 To date, search algorithm that return approximately optimal are severely limited in that they obtain their solution quality guarantee (i.e., at most $1+\epsilon$ of optimal) by consider an {\em admissible} heuristic function. Admissible heuristic function are heuristic function that provide a lower bound on the cost of reaching the goal. By construction, such heuristic function are biased and tend to be inaccurate. Consequently, bounded suboptimal search algorithm often continue the search for better plans even though their incumbent plan (the best plan found so far) is already approximately optimal. In addition, they are limited in their ability to learn from observed trajectories~\cite{ees,egraphs}.
 
 % PAC is so great. It will make world peace. 
-The PAC search framework we propose to develop will allow planning algorithms based on heuristic search to fully exploit past experience and observations. In PAC search, which builds on earlier work by Ernandes and Gori~\cite{ernandes2004likely}, each generated state is associagted with an estimate of the likelihood that it will improve on the incumbent solution. This estimate is derived from mining past optimal solutions to similar problems in the same domain. Thus, when a goal is found, one can compute the likelihood that it is optimal or approximately optimal. Beyond the theoretical elegance of having such guarantees, they allow more informed decision making when planning. In particular, one can identify when a sufficient plan has been found earlier than when only using an admissible heuristic, thus significantly speeding up the search. Moreover, probabilistic solution quality guarantees 
+The PAC search framework we propose to develop will allow planning algorithms based on heuristic search to fully exploit past experience and observations. In PAC search, which builds on earlier work by Ernandes and Gori~\cite{ernandes2004likely}, where each generated state is associated with an estimate of the likelihood that it will improve on the incumbent solution. This estimate is derived from mining past optimal solutions to similar problems in the same domain. Thus, when a goal is found, one can compute the likelihood that it is optimal or approximately optimal. Beyond the theoretical elegance of having such guarantees, they allow more informed decision making when planning. In particular, one can identify when a sufficient plan has been found earlier than when only using an admissible heuristic, thus significantly speeding up the search. Moreover, probabilistic solution quality guarantees 
 provide a more accurate view of the incumbent solution than the current worst-case quality estimate obtained when using admissible heuristics.  
 
 
@@ -366,8 +372,7 @@ We propose to address this setting by using Valiant's PAC semantics~\cite{valian
 \note{Roni: something about how PAC semantic are great in balancing knowledge}
 
 
-\note{Brendan, does the paragraph below make sense?}
-A PAC semantic rule for planning translates to an action the planning agent can perform, and the error function of the rule corresponds to probability that the action preconditions and effects are true, i.e., wheher the action is applicable and will have its desired effect. 
+
 
 
 \subsubsection{Learning PAC Semantic Rules for Planning}
@@ -386,13 +391,56 @@ Problems:
 After learning a set of rules for planning, there is still the task of actually generating the plan. PAC semantic have been designed explicitly to enable efficient reasoning~\cite{valiant2000robustLogics}. However, they have been applied so far to a limited set of reasoning tasks such as prediction of missing words in text~\cite{michael2008first} and user profiling in a recommender system~\cite{semeraro2009knowledge}. With the the exception of the preliminary work of PI Juba~\cite{juba2016aaai,juba2016jmlr}, PAC semantic rules have not been used to neither planning nor diagnosis, two fundamental AI reasoning tasks. We aim to do so in the proposed research. 
 
 
+\note{Brendan, does the paragraph below make sense?}
+% A concrete explanation of what is a PAC semantice rule in planning
+The particular type of PAC semantic rules we aim to reason about in the context of planning are the actions the planning agent can perform. 
+That is, we will obtain from learning the set of actions $A$ that the agent is assumed to be able to perform and are useful for planning, 
+and an error function that maps every action $a\in A$ 
+to the probability that the action's preconditions and effects are true.
+Concretely, consider a STRIPS-style action $a$, which is defined by the tuple $\tuple{\pre(a), \eff(a), c(a)}$, corresponding to the preconditions, effects, and cost of $a$, respectively. The corresponding error function value $err(a)$ is the probability that (1) $a$ is applicable when $\pre(a)$ hold, (2) applying $a$ will have cause the effects in $\eff(a)$, and (3) the cost of applying $a$ is $c(a)$. 
+
+
+
 % Planning with PAC rules is not trivial
-Planning with PAC semantic rules raises several challenges and opens several possible types of planning problems.
+Planning with such PAC semantic rules raises several challenges and opens several possible types of planning problems.
 Since every planned action may not have its desired effect (since the learned rules are only probably approxiamtely correct)
-then one may wish to generate a plan that will achieve the goal with some amount of certaintly. 
-Alternatively, one may wish to generate a plan that is most likely to acheive the goal, 
-while others may devise some tradeoff between the plan's cost (sum of action costs) and its probability of success. 
-Solving these planning problems is a main objective of the proposed research. 
+then one may wish to generate a plan that will achieve the goal with some amount of certaintly. In addition, it is often desired that the cost of the resulting plan (sum of the costs of its constituent actions) is minimized. A natural some tradeoff between the plan's cost  and its probability of success exists. 
+
+% Our approach: build on existing planners, link to PAC search framework we developed
+A natural framework for balancing success probability and solution cost 
+is the PAC search framework described above. 
+Therefore, proposing intelligent planning algorithm that balances this trandeoff, which arises when using learned PAC semantic rules as actions, is a main objective of this proposed research. 
+
+%Our approach will build on  existing planners and approaches for probabilistic contignet planningand 
+
+
+
+
+\note{Roni: this should probably go into the scientific background}
+Of course, planning that considers both uncerainty and plan cost is well-studied. Perhaps the most rich model for planning with uncertainty is
+the Partially Observable Markov Decision Problem (POMDP)~\cite{cassandra1994acting}
+model, in which agent's actions may have a set of possible outcomes
+and the agent may not know its current state with certainty. 
+In POMDP, a transition function and an observation function are assumed to be given, which map the probability of reaching a state and obtaining an observation, respectively, given that the agent performed a given action in a given state. Having such an accurate knoweldge about the world's uncertainty is often difficult to obtain and POMDPs are nutoriously difficult to solve and POMDP solvers usually do not scale~\cite{todo}. 
+Thus, ``weaker'' models of uncertainty have also been studied. 
+For example, {\em conformant planning}~\cite{todo} is the task of generating a plan to reach a goal when the actions have non-deterministic effects
+and the initial state is unknown. The desired plan in conformant planning must guarantee that the goal is achieved without any observations collected while executing it. Contingent planning~\cite{} addresses a similar setting, but the task is to generate a conditional plan, deciding in run time which actions to perform by considering collected observations. 
+Both conformant and contingent planning have probabilistic versions,
+in which the goal is to maximize the probability of success~\cite{blum1999probabilistic,taig2015compilation,markou2016cost} 
+or to come up with a plan that achieves the goal with probability that success exceeds the threshold~\cite{kushmerick1995algorithm}.
+
+% Differential 
+All the above shows the maturity of the planning literature 
+and we intend to build on these success stories when developing our  planning algorithms. However, there are some key differences 
+when planning with learned PAC semantic rules. First, we do not expect realistially to be able to learn a full-fledged POMDP model for problems that are not very small. Indeed, learning POMDP models have been studied in the reinforcement learning literature and are known be difficult to scale. 
+Second, we deal with two sources of uncertainty -- the actions may not even be applicable and their outcome may be different than planned. In some sense, this is similar to the weak-fault model setting mentioned above in the context of diagnosis -- we do not assume to know what will happen if the action will fail. Perhaps the closest setting is that of probabilistic contingent planning, but planning cost has rarely been addressed in this scenario. 
+
+
+% This is more than just another planning algorithms - we are ``closing the loop'' of planning and learning
+By developing effective planning algorithms able to use learned PAC semantic rules is useful on its own right, as one can imagine other ways in which actions that are only applicable with some probability can arise. However, 
+it is important to demonstrate this specifically in the proposed research, to show that learning PAC semantic rules form a viable wholistic solution to the problem of planning with an incomplete model. 
+
+
 
 
 
