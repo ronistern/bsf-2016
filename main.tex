@@ -164,7 +164,22 @@ how it is different.}
 
 
 \subsection{Learning in Diagnosis}
-\note{Roni: TODO me}
+\note{TODO For Roni}
+
+
+Niggemann et al.~\cite{niggemann2012learning} recently proposed a method for learning behavioral models of a system that is described by a hybrid timed automata. They showed that given enough samples they will accurately learn the system, but the number of samples is very large. This learned model was used so far for fault detection~\cite{nig} but not for diagnosis (fault isolation).
+
+Sadov et al.~\cite{sadov2010towards} attempted to learn a partial model and use it to diagnose. Their focus was on how to minimize the number of samples until a useful enough model is obtained. 
+
+
+\subsection{Diagnosis with an Incomplete Model}
+Dexter and Benouarets~\cite{dexter1997model} proposed a model-based algorithm for fault detection and diagnosis that is designed for cases where one has an inaccurate model. Their algorithm identifies faulty components using fuzzy matching, comparing the observations against several fuzzy reference models. 
+
+There is also a line of work on {\em robust fault detection and isolation} (robust FDI)~\cite{chen2012robust,frank1997survey} that is specifically designed to develop fault detection and diagnosis algorithm that are robust to inaccuracies in the system model. Most work on robust FDI do not apply logic-based reasoning and attempt to model the possible ways in which the model can be inaccurate. This is orthogonal to our approach, where we do not assume such a-priori knowledge about the inaccuracy of the model.  
+
+
+
+\note{TODO For Roni: say something about diagnosis with Bayesian Networks}
 
 \section{Objectives and Significance}
 %2. From BSF guidelines: Objectives and significance of the research
@@ -438,7 +453,7 @@ Second, we deal with two sources of uncertainty -- the actions may not even be a
 
 % This is more than just another planning algorithms - we are ``closing the loop'' of planning and learning
 By developing effective planning algorithms able to use learned PAC semantic rules is useful on its own right, as one can imagine other ways in which actions that are only applicable with some probability can arise. However, 
-it is important to demonstrate this specifically in the proposed research, to show that learning PAC semantic rules form a viable wholistic solution to the problem of planning with an incomplete model. 
+it is important to demonstrate this specifically in the proposed research, to show that learning PAC semantic rules form a viable holistic solution to the problem of planning with an incomplete model. 
 
 
 
@@ -451,29 +466,66 @@ it is important to demonstrate this specifically in the proposed research, to sh
 
 %Learn conditions on sensors taht yield a small set of possbile diagnoses (see AAAI paper)
 
-\subsubsection{Diagnosis with an Inaccurate Model and Past Observations}
+\subsubsection{PAC Semantics for Probably Correct Model-based Diagnosis}
 \note{Warning: drafts below!}
-BN 
-CPTs
 
 
-% Related work
-
-Dexter and Benouarets~\cite{dexter1997model} proposed a model-based algorithm for fault detection and diagnosis that is designed for cases where one has an inaccurate model. Their algorithm identifies faulty components using fuzzy matching, comparing the observations against several fuzzy reference models. 
-
-There is also a line of work on {\em robust fault detection and isolation} (robust FDI)~\cite{chen2012robust} that is specifically designed to develop fault detection and diagnosis algorithm that are robust to inaccuracies in the underlying system model. The main approach there is to try to model the errors derived from the inaccuracies of the model. In contrast, we 
+% In MBD we're used to incomplete models, but the approximate models are harder for us. But still, we rock at reasoning, so what should we do?
+Since modeling is known to be very difficult in model-based diagnosis, much of the MBD literature has dealt with weak types of model. One such well-studied weak type of model is the {\em weak fault model} (WFM), in which only the nominal behavior of the components is modeled while there is no knowledge of how components behave when they are faulty. However, even such a weak fault model is usually very difficult to obtain. Indeed, predicting {\em exactly} how components will {\em always} behave in a complex system is very difficult. In particular, obtaining component behavior rules that are always correct is very hard, and learning such rules is practically impossible in most cases. 
+On the other hand, efficient MBD algorithms have been developed over the years (some by PI Stern~\cite{metodi2014novel,stern2012exploring,stern2014hierarchical,elmishali2016dataAugmented,lazebnik2016solving}) that apply various forms of reasoning to infer diagnoses based on such models. 
 
 
+% YES! let's use PAC semantics. Rules are behaviors and their relationship with health
+We propose to leverage the power of PAC semantics to enable reasoning with incomplete and inaccurate models. The PAC semantic rules in the context of model-based diagnosis are relations between observed system behavior (e.g., sensor values) and the health of subset of the diagnosed system's components. 
+A simple example is Horn-clause type of rules, e.g., $h(A)\rightarrow (o\equiv i_1 \wedge i2)$
+where $A$ is a component in the system, $h(A)$ is a predicate denoting that $A$ is healthy, and $i_1$, $i_2$, $o$ are the input and output values of $A$, respectively. 
+Such rules are commonly used in MBD algorithms, but the novelty is the error function that is added when using PAC semantics, associating each rule with the probability that it is false. 
+
+
+% Challenges in learning such rules
+Learning PAC semantic rules for MBD raises similar challenges to those outlined above for learning PAC semantic rules for planning. 
+One challenge is how to choose which rules to learn. In MBD, the tradeoff is between  diagnostic accuracy and complexity: more rules may allow finding more accurate diagnoses but at the cost of greater complexity. 
+A second challenge is ... \note{Roni: TODO for me: put here something about chaining and transportability after reading that part for planning}
 
 
 
-%\subsection{Model-and-Observations Reasoning for Plan Recognition}
-%The last reasoning task we investigate is plan recognition. In plan recognition (PR), the task is to identify the plan being followed by an agent by observing its behavior. PR can be viewed as a generalization of the aforementioned diagnosis task~\cite{mclaraith}, where the plan being followed corresponds to the behavior of the faulty components. 
-%Some form of PR is needed in the development of intelligent user interfaces~\cite{} and human-robot interaction, and in general as part of an effective collaboration~\cite{todo}. 
-%Slightly more formal, in PR we are given a set of observations 
-%PR is a fundamental task in AI and has been studied in the lite
-%In PR the model is the possible plans the observed agent may be following. This can be given as a set of plans, or in a more compact way by defining the planning domain that the observed agent maintains when planning. For example, some work on PR assumed that a plan library is given in the form of a context free grammar, and that the agent uses this plan library to construct a heirarchical plan~\cite{}. In other cases, a STRIPS-like domain definition is given to the PR algorithm as the model. 
-%....
+
+% Learning exactly what each component is hard, but maybe learning broader rules will be easier.
+To simplify the learning task and to be able to obtain more information from past observations, we intend to learn and reason about more complex rules than simple Horn clauses. First, we will consider rules where the left hand side consists more than a single component,  e.g., $(h(A)\wedge h(B)) \rightarrow o\equiv i_1\wedge i_2$, where $B$ is another component. Such rules are expected to be easier to learn from data, as they may require less detailed knowledge about the internals of the diagnosed system. Moreover, rules in which observed values exonerate some components from the suspicious of being fault are also possible~\cite{struss1989physical}. 
+Finally, rules that include both health predicates and sensor values in their left-hand side are also possible, e.g., 
+$(in_1=1 \wedge h(A) \wedge h(B))\rightarrow o\equiv 1$. Existing MBD algorithms are capable of reasoning with all these types of rules to obtain consistent diagnoses. 
+
+
+% Statement of operation: we will reason about rules that are only sometimes true
+However, most MBD algorithm do not reason about the likelihood that the rules they use for reasoning -- i.e., the system model -- may be incorrect. A key objective in the proposed research is to study exactly this: develop MBD algorithm that are able to reason with PAC 
+semantic rules. 
+
+% The problem 
+Concretely, the diagnostic challenge to find the most likely diagnosis (or a set of highly likely diagnoses) given a set of rules that describe various relations between observed system behavior and components' health, such that each rule is associated with a probability that it is true, referred to as the rule's {\em validity}. 
+
+% Why it is not trivial
+A simple approach can be to limit the diagnosis algorithm to only use rules whose validity is over some given value. This approach has several drawbacks. First, there is no principled way to set this threshold. Second, this approach can result in suboptimal results, as follows. 
+Assume that we have 3 rules $r_1$, $r_2$, and $r_3$ such that the probabilities that each rule is correct are 0.8, 0.8, and 0.7, respectively. 
+Now, imagine that there are two diagnoses $\omega_1$ and $\omega_2$, such that $\omega_1$ is derived by reasoning about $r_1$ and $r_2$, while $\omega_2$ is derived by reasoning only about $r_3$. Which diagnosis is more likely? 
+if we assume that rules likelihoods are independent, than clearly $\omega_2$ is more likely. But, if we set the rules threshold to 0.75, our diagnosis algorithm will not find $\omega_2$. 
+
+% We will solve it!
+Thus, when diagnosing with PAC semantic rules,  the likelihood of a diagnosis is affected by  the validity of the rules used to infer it as well as any other prior knowledge about the components failure likelihood (such as the learned priors discussed in earlier in this proposal). We will develop diagnosis algorithms based on heuristic search that search for the most likely diagnoses in this setting. Developing these algorithms as well as appropriate heuristic is part of the proposed research. 
+
+
+% Diagnosis for physical systems
+Above, we have implicitly assumed that logical rules can be learned to approximately represent the  diagnosed. However, systems may be too complex to be represented in logical, qualitative means. In such cases, the learned rules will include learning functions that approximate some parts of the system behavior. While learning a complete model of a physical system is bound to be futile, we will aim for learning cases that are common enough and can be approximated by a learned function. A preliminary framework for how to do so was recently outlined by PI Juba~\cite{juba2016aaai,juba2016conditional}.
+
+
+
+
+% Wrapping it up -- a complete learning and diagnosing framework that exploits the benefits of PAC semantics and lay on sound theoretical ground
+As in planning, the merit of developing diagnosis algorithm able to reason with PAC semantic rules is especially important to demonstrate the ability to perform a complex reasoning task like diagnosis without a complete system model and based on the theoretical grounds of PAC semantics. 
+
+
+
+
+
 
 
 
@@ -487,8 +539,8 @@ and then some new methods by us that integrate all these things nicely.
 
 
 %4. From BSF guidelines: Risk analysis and alternative paths that will be followed if the suggested research plan fails (only in those fields in which it is relevant);
-\section{Risk Analysis and Alternative Plans}
-\note{Maybe we want to avoid this section, even though it is in the guidelines}
+%\section{Risk Analysis and Alternative Plans}
+%\note{Maybe we want to avoid this section, even though it is in the guidelines}
 
 \section{Collaboration between the Principal Investigators}
 PI Juba and PI Stern met when they were both post-doctoral fellows as the School of Engineering and Applied Sciences (SEAS) in Harvard University. 
@@ -500,9 +552,12 @@ Both PIs are young researchers and hope to develop this joint interest to a long
 
 %5. From BSF guidelines: An account of available U.S. and Israeli resources, including all personnel and equipment relevant to the research;
 \section{Available U.S. and Israeli Resources}
+One Ph.D student and one Master’s students from PI Stern’s group, which currently includes 3 Ph.D. and 10 Master's students, will participate in the proposed research. 
+\note{Roni: Brendan, please fill in your estimate of how many people will work on the project. From our discussion on budget I think you aim for one student, right?}
+The facilities available at BGU for PI Stern’s
+lab will be available for this research, including basic office facilities and a server for performing heavy duty computations. BGU and WUSTL will provide the facilities for holding the annual research meetings.
 
-
-
+%[Avi, Michal, Iliya, Barak, Amir, Orel, Hila, Ester, Netanel, Gal, Dor, Daniel, Yossi, ]
 
 
 
