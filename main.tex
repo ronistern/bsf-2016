@@ -1,4 +1,4 @@
-\documentclass[12pt]{article}
+﻿\documentclass[12pt]{article}
 
 \usepackage[ruled,vlined,linesnumbered]{algorithm2e}
 \usepackage{graphicx}
@@ -158,10 +158,8 @@ While the above recent success stories of learning for planning is encouraging, 
 
 
 \subsection{Reinforcement Learning}
-\note{Roni: Brendan, can you put here how we are different from standard reinforcement learning? 
-I read the JMLR related work section again, but think it will still be better if you put here
-how it is different.}
-
+\label{reinforcementLearning}
+ Most of the previous work on learning and planning follows a reinforcement learning approach. The main difficulty with reinforcement learning is that it combines the problems of learning an planning with the inherently hard problem of {\em exploring} an unknown environment. For example, when standard reinforcement learning approaches are analyzed~\cite{kearns2002POMDPsample,shani2005modelPOMDP}, the bounds feature an exponential dependence on the time horizon (possibly in the form of the discount factor), a polynomial dependence on the number of distinct states (which is exponential in the number of fluents in planning), or both. Any work that takes the initial step of casting the problem as solving the MDP over belief states immediately pays a penalty that the representation of these belief states is doubly exponential in the number of attributes describing the state.  In order to avoid these inherent barriers, it is necessary to focus on a special case of the problem somehow, but the known natural special cases of reinforcement learning are largely either still too hard or too restrictive to capture natural planning domains. Work on restricting the family of policies to, for example, finite-memory policies, still yields an intractable problem~\cite{meuleau1999finitestate}. Other works assume that either a ``best'' action always gives substantially better utility than the alternatives~\cite{fern2006policyIteration} which certainly does not capture most planning domains, or else simply assume that it is known {\em how} we can find a loss-minimizing policy~\cite{lazaric2010policyIteration}, and thus do not actually address the planning problem.
 
 \subsection{Learning in Diagnosis}
 \note{TODO For Roni}
@@ -379,6 +377,8 @@ Data about observed trajectories can play several roles in such cases of an inco
 and finally, as a source for speeding up planning as discussed above. 
 
 % This is well-known, but lacking good theory to decide how to reason
+Given the success that has been encountered at using machine learning to acquire the knowledge needed for many AI tasks, it is unsurprising that there has been much work on learning domain models for planning. But, the problem features some inherent difficulties, which manifest themselves as shortcomings of each of the major families of approaches proposed to date, either in the kinds of domains that can be captured, or in the performance of the algorithms performing the learning or planning. We discussed the tradeoffs and concessions made by most of these works (using reinforcement learning) in Section~\ref{reinforcementLearning}. Similarly, work on representing the problem as a graphical model such as a dynamic Bayes net immdeiately faces the structure learning problem for probabilistic graphical models~\cite[Section~19.4]{koller2009pgm}, that still has no scalable solution, except in restrictive cases such as low treewidth. In addition, Amir and Chang~\cite{amir2008} showed how to learn complete action models, but only when these could be described by constant arity rules (clauses of width bounded by a small constant, e.g., three). Since the problem is inherently hard, our work will also only solve a restricted family of learning and planning tasks. But, we will aim to propose a family of such tasks that enables us to learn enough about standard domain models to facilitate planning. We will aim to use natural assumptions about the training data in defining our family of tasks, such as that the relevant effects are exhibited in the training data.
+
 While work on reasoning with incomplete models and observations has been discussed ... \note{Roni: we need some strong arguments against what's been done}
 
 
@@ -391,13 +391,13 @@ We propose to address this setting by using Valiant's PAC semantics~\cite{valian
 
 
 \subsubsection{Learning PAC Semantic Rules for Planning}
-\note{Roni: TODO: Brendan?}
+Planning fundamentally deviates from the usual setting of PAC semantics in two ways. First, the objective is not merely to {\em predict} relationships between the attributes describing the environment, but to use the relationships between the {\em choice} of action and {\em resulting change} in the environment: planning is fundamentally about {\em causal relationships.} Second, these choices alter the observed states of the environment and observed changes in those states. So, using a new set of choices may potentially result in a distribution of data at ``test'' time that is entirely different from the data used for training. Such a ``nonstationary'' (``non-i.i.d.'') data distribution generally invalidates the assumptions underpinning the standard guarantees that the the learned rules generalize to the test data.
 
+If the relevant sequences of actions have at least been represented in the training data, techniques for ``off-policy'' learning via ``importance weighting'' can be used to correct the skew induced by the plan with respect to the training distribution~\cite{precup2000off-policy,precup2001off-policy,shelton2001,peshkin2001,peshkin2002,uchibe2004,wawrzynski2009,hachiya2009,hachiya2011,juba2016jmlr}. But, these techniques {\em only} address the skew due to the choice of actions and cannot predict the effect of a new action sequence. Indeed, the problem of {\em exploring} an environment sufficiently well to learn all of the rules describing it is inherently hard: Kakade~\cite[Section~8.6]{kakade2003thesis} observes that if the environment encodes a ``combination lock,'' for example, an exponential search over the possible sequences of actions is unavoidable in order to discover the effect of the actions on the attribute describing the lock's state. Standard models such as Markov decision processes furthermore provide no guarantee that actions will continue to have the same (lack of an) effect once the environment enters a new state. The problem here can be seen as fundamentally one of {\em ``transportability''}: guaranteeing that the rules observed under one set of conditions continue to hold under new conditions. The importance weighting approach can be seen to be special cases of the formulas derived by Bareinboim and Pearl~\cite{bareinboim2012completeness,bareinboim2013algorithm}, who also describe conditions characterizing when such formulas can be given.
 
-Problems: 
-1. Causality and chaining of rules
-2. Which rules are helpful to plan (how to define it, etc.)
-3. Trasportability
+Given the inherent difficulty of the task, we can only hope to identify a special case of such tasks under which efficient algorithms are possible. In the work by PI Juba on learning for planning~\cite{juba2016jmlr}, this difficulty was avoided by only promising to find plans that use sequences of actions that are represented in the training data. That work used a largely data-driven, implicit learning approach to learning the rules describing the actions and environment. Here, we conjecture that by identifying an explicit partial model, we can obtain transportability under some natural, less restrictive conditions that only require the individual effects, not the entire sequence of actions to be exhibited in the training set. Tentatively, we first assume that {\em actions effects are only determined by the observed attributes}, and second, that {\em the rules describing the effects of actions are frequently observable in the data distribution}. (Both of these assumptions are needed to rule out some form of ``combination lock.'') In our work, we will seek to further refine the assumptions we use, guided by the characterizations derived by Bareinboim and Pearl. Indeed, Valiant~\cite{valiant2006knowledgeInfusion} suggested that the use of explicit rules corresponds to invoking some kind of independence assumption, but did not concretely identify such conditions. We will seek to articulate a clean set of assumptions for planning.
+
+The question still arises of which rules to learn. Complete descriptions of environments in standard models of planning are essentially equivalent to general DNF rules, which are believed to be hard to learn~\cite{daniely2016dnf} (even under our simplifying assumptions). But, in preliminary work, we can show that it is possible to learn the rules that are relevant for the analysis of a plan, as long as an backwards, goal-directed algorithm is used for the analysis; for example, standard algorithms for resolution (and SAT-solvers) are of this form. Roughly, during the analysis, one simply tracks what fraction of the data is inconsistent with the current sub-goal; if no counterexamples remain, the sub-goal can be added as a learned rule. The amount of data required for soundness can be bounded using a bound on the running time of the algorithm, for example. Thus, we anticipate that the main obstacles to overcome are the identification of adequate assumptions, as discussed above, and the design of effective algorithms for finidng plans, which we will discuss next.
 
 \subsubsection{Planning with PAC Semantic Rules}
 
@@ -408,7 +408,7 @@ After learning a set of rules for planning, there is still the task of actually 
 
 \note{Brendan, does the paragraph below make sense?}
 % A concrete explanation of what is a PAC semantice rule in planning
-The particular type of PAC semantic rules we aim to reason about in the context of planning are the actions the planning agent can perform. 
+The particular type of PAC semantic rules we aim to reason about in the context of planning capture the preconditions, effects, and/or costs of the actions the planning agent can perform. 
 That is, we will obtain from learning the set of actions $A$ that the agent is assumed to be able to perform and are useful for planning, 
 and an error function that maps every action $a\in A$ 
 to the probability that the action's preconditions and effects are true.
