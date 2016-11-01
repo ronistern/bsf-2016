@@ -1,43 +1,61 @@
 \documentclass[12pt]{article}
+
+\usepackage[ruled,vlined,linesnumbered]{algorithm2e}
+\usepackage{titling}
 \usepackage{times}
 \usepackage{anysize}
 \marginsize{2cm}{2cm}{2cm}{3cm}
 %\onehalfspace
 %\doublespace
 \setlength{\parindent}{0.8cm}
+%\setlength{\parskip}{0.2\baselineskip}
+%\setlength{\topmargin}{2cm}
+%\setlength{\textheight}{25cm}
+%\setlength{\textwidth}{14cm}
+%\setlength{\oddsidemargin}{2cm}
+%\setlength{\evensidemargin}{2cm}
 \usepackage{fancyhdr}
 \pagestyle{fancy}
 
+\newcommand{\note}[1]{\textbf{\textit{#1}}}
+\newcommand{\astar}{A$^*$}
+
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{observation}{Observation}
+\newtheorem{corollary}{Corollary}
+
 \linespread{1.3}
-\lhead{} \rhead{R. Stern and B. Juba}
-\cfoot{\thepage} 
-%\cfoot{} 
-\pagenumbering{arabic}
-%\pagenumbering{Roman}
-
 \begin{document}
-
-\begin{center}
-\LARGE{Broader Impact Statement}
-\end{center}
-
-% 1. From BSF guidelines: A brief description of the subject and the scientific and technological background;
-
-
-The contributions of the proposed research go far beyond creating better algorithms for diagnosis, planning, and plan recognition.  By studying and understanding the effect of having an approximate model on the theoretical limits of what can be learned from data, 
-and what needs to be supplied by the approximate model, one can impact the efforts used to generate such approximate models in a more informed way. For example, if some aspect of the world is especially difficult to learn, then it makes sense to divert expert efforts in modelling it, while if other parts are easier to learn then expert costs can be saved. Since modeling the worlds is notoriously difficult, choosing what not to model is key in practical applications of AI. 
-Moreover, we show that one may actually choose to ignore a given model 
-if sufficient data is available, in order to speedup the reasoning process.
+\title{Broader Impacts Statement \\ \Large{Data-and-Model Driven Reasoning, BSF Application No. 2016141}}
+\date{\vspace{-0.5cm}}
+\author{Roni Stern \\ Software and Information Systems Eng., Ben Gurion University of the Negev
+        \and Brendan Juba \\ Computer Science, Washington University in St. Louis}
 
 
 
-TODO: Something about teaching students and all that
+\maketitle
+
+%\begin{center}
+%\LARGE{Broader Impact Statement}
+%\end{center}
+% BSF Instructions:
+%This file should include the words 'Broader Impacts Statement' in the heading. The following information should be included: the full title of the proposed application, which should be brief, meaningful and suitable for use in the general media; the application number supplied by the system; and the names and affiliations of the principal investigators.
+%An impact statement of about 250 words or less is required. Please address the broader impact and importance (social and/or economic and/or scientific value) of the proposed research.
+
+While in the proposed research we will focus on two specific problems -- planning and diagnosis -- the impact is expected to be much wider. 
+
+First, model-based and data-driven methods have been used to a much wider range of problems, such as plan recognition, coordination of multi-agent systems, and scheduling. We expect that the foundations we will establish in the proposed research for integrating model and observations will carry over to other tasks. 
 
 
-\pagebreak
-\bibliographystyle{plain}
-\bibliography{library}
+Second, the PAC search framework we will develop will open up the field of heuristic search to the notion of probabilistic guarantees, which will allow search algorithms in general to scale to much larger problems while still preserving a useful notion of solution quality. 
+
+Third, by studying and understanding the effect of having a partial model on the theoretical limits of what can be learned from data, one can decide the cost-effectiveness of generating such a model. 
+This is especially improtant since modeling the world is notoriously difficult, and choosing what not to model is key in practical applications of AI. 
+
+Lastly, most funds are requested to support graduate students, reflecting our focus on education and our commitment to training the next generation of researchers. 
+
+
 
 \end{document}
 
- 

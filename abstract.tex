@@ -27,7 +27,7 @@
 
 \linespread{1.3}
 
-\lhead{Data-Augmented Model-Based Reasoning} \rhead{R. Stern and B. Juba}
+\lhead{Data-and-Model Driven Reasoning} \rhead{R. Stern and B. Juba}
 \cfoot{\thepage} 
 %\cfoot{} 
 \pagenumbering{arabic}
@@ -35,20 +35,17 @@
 
 \begin{document}
 
-\title{Abstract -- Data-Augmented Model-Based Reasoning \\ BSF Proposal X/X}
-\author{Roni Stern \\
-Ben Gurion University of the Negev \\
-Be'er Sheva, Israel
-\and Brendan Juba \\
-Washington University in St. Louis \\
-St. Louis, MO, USA
-}
-\date{}
+
+\title{Abstract \\ \Large{Data-and-Model Driven Reasoning, BSF Application No. 2016141}}
+\date{\vspace{-0.5cm}}
+\author{Roni Stern \\ Software and Information Systems Eng., Ben Gurion University of the Negev
+        \and Brendan Juba \\ Computer Science, Washington University in St. Louis}
 \maketitle
 
 % There are two main approached: model-based and data-drive 
-Research in Artificial Intelligence is torn between two general approach: the traditional AI approach that assume a model of the world is given and {\bf reasons} about it, and the data-driven AI approach that builds on the growing availability of historical data and {\bf learns} from it how to handle future events. For example, classical planning algorithms 
-employ a model-based approach through the well-known ``frame axiom'' assumed by STRIPS planners. In contrast, popular re-enforcement learning algorithm do not even try to model the environment, and learn directly how to act. Both approaches -- model-based and data-driven -- have pros and cons and are suited for different settings. 
+Research in Artificial Intelligence is torn between two general approach: the traditional AI approach that assume a model of the world is given and {\bf reasons} about it, and the data-driven  approach that builds on the growing availability of historical data and {\bf learns} from it how to handle future events. For example, classical planning algorithms 
+employ a model-based approach through the well-known ``frame axiom'' assumed by STRIPS planners. In contrast, popular re-enforcement learning algorithm do not even try to model the environment, and learn directly how to act. Both approaches -- model-based and data-driven -- have pros and cons, where model-based methods are used when a reliable model of the world is given while 
+data-driven methods are usually used observations of past activities are given instead of such a model. % and model-based methods are used when a reliable model of the world is given and are usually applied suited for different settings. 
 %In general, one can say that the model-based approaches are often more principled and allow stronger claims about the performance of the underlying algorithms (e.g., optimality). However, as countless applications have discovered, having an accurate model of the world is very difficult. These are not needed by data-driven methods, which are also often much faster than the model-based methods. 
 
 
@@ -59,8 +56,8 @@ employ a model-based approach through the well-known ``frame axiom'' assumed by 
 
 % We aim for the middle ground
 % Our goal: when to use which and why
-It is the aim of this proposal to study how to combine model-based and data-driven approaches in cases where an approximate model of the world is given along with observed data. Concretely, we focus on three classical AI tasks: automated planning, model-based diagnosis, and plan recognition. Both model-based and data-driven methods were proposed for these tasks, including in prior work of the PIs. 
-For each of these fundamental AI problems we will develop algorithms and theory for using both sources of information --  a given approximate model and observed data -- in a principled way. 
+In the proposed research we will explore how model-based and data-driven approaches can augment each other in the broad range of settings where both model and observations are available. We explore these model-and-observation settings for two important and well-studied problems: automated planning and automated diagnosis. 
+Our objective is to developed planning algorithms and diagnosis algorithms that enjoy the complimentary benefits of the model-based and the data-driven aproaches, and use both sources of information in a principled way. 
 
 
 \end{document}
