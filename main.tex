@@ -54,9 +54,9 @@
 
 
 % Reasoning is really important. Example of reasoniong for planning, diagnosis, and plan recognition
-{\bf Reasoning} is ``the process of thinking about something in a logical way in order to form a conclusion or judgment''~\cite{reasoning2016dictionary}, and is commonly attributed as a task that requires some intelligence. Indeed, much of the research on Artificial Intelligence (AI) has been devoted to developing methods for reasoning. The proposed research addresses two specific AI tasks that require effective reasoning:  {\em automated planning and automated diagnosis}. 
-In planning, one needs to reason about possible sequences of future actions it may take in order to achieve a desired goal. 
-When diagnosing, one needs to reason about the possible explanations to an abnormally behaving systems. 
+%{\bf Reasoning} is ``the process of thinking about something in a logical way in order to form a conclusion or judgment''~\cite{reasoning2016dictionary}, and is commonly attributed as a task that requires some intelligence. Indeed, much of the research on Artificial Intelligence (AI) has been devoted to developing methods for reasoning. The proposed research addresses two specific AI tasks that require effective reasoning:  {\em automated planning and automated diagnosis}. 
+%In planning, one needs to reason about possible sequences of future actions it may take in order to achieve a desired goal. 
+%When diagnosing, one needs to reason about the possible explanations to an abnormally behaving systems. 
 %When planning, one needs to reason about possible future actions it may take in order to achieve a desired goal. When diagnosing, one needs to reason about the possible explanations to an abnormally behaving systems. 
 
 
@@ -76,18 +76,18 @@ When diagnosing, one needs to reason about the possible explanations to an abnor
 
 
 % The traditional AI approaches are model-based - they assume a model is given
-Traditional AI algorithms for planning and for diagnosis use {\em model-based reasoning}, where an underlying model of the world is assumed and is used to effective plan or diagnose. For example, the world model in classical (STRIPS) planning is a collection of first-order predicate calculus formulas that describe states, actions' preconditions and effects, and relevant ``frame axioms''~\cite{ghallab2004automated}. 
-In model-based diagnosis (MBD), the world model is also a set of first-order formulas, but in MBD it describes the normal (and possible abnormal) behavior of the diagnosed system components'~\cite{reiter1987theory,deKleer1987diagnosing}. 
+Traditional AI algorithms for tasks that involve {\em reasoning}, such as planning and for diagnosis use {\em model-based reasoning}: an underlying model of the world is assumed to be given, and is used to generate plans or diagnoses. For example, the world model in classical (STRIPS) planning is a collection of first-order predicate calculus formulas that describe states, actions' preconditions and effects, and relevant ``frame axioms''~\cite{ghallab2004automated}. 
+In model-based diagnosis (MBD), the world model is also a set of first-order formulas, but in MBD it describes the normal (and possibly abnormal) behavior of the diagnosed system components'~\cite{reiter1987theory,deKleer1987diagnosing}. 
 
 
 
 % No worries - data is here!
 Data-driven methods have been proposed as an alternative approach to performing many AI tasks, including planning and diagnosis. Such methods assume that the world is observed and these observations are given as input instead of an accurate model of the underlying world. Then, Machine Learning algorithms are used to learn a model that approximates the world,   
-in a way that allows us to perform model-based reasoning effectively. In fact, some data-driven approaches even skip this part, and directly learn how to act/diagnose/reason without generating a complete model of the world~\cite{kearns2002POMDPsample}. 
+in a way that allows us to perform model-based reasoning effectively. In fact, some data-driven approaches even skip this part, and directly learn how to act/diagnose/reason without generating a complete model of the world (e.g.,~\cite{kearns2002POMDPsample}). 
 
-Data-driven methods overcome an inherent obstacle in model-based reasoning -- the need for an accurate enough model of the environment. Valiant
+These data-driven methods overcome an inherent obstacle in model-based reasoning -- the need for an accurate enough model of the environment. Valiant
 argues that in addition to naturally solving the problem of large-scale knowledge acquisition, data-driven mechanisms also compensate for the kind of errors that 
-are introduced in other parts of a system as a result of  reasoning with a model that is an approximate representations of the world~\cite{valiant2000neuroidal,valiant2000robustLogics}. With the growing availability of historical data and computing power, it is reasonable to say that most AI efforts these days are data-driven,
+are introduced in other parts of a system as a result of  reasoning with a model that is an approximate representations of the world~\cite{valiant2000neuroidal,valiant2000robustLogics}. With the growing availability of data and computing power, it is reasonable to say that most current AI efforts are data-driven,
 and data-driven algorithms have been proposed for  planning~\cite{fern2011first,juba2016jmlr} and diagnosis~\cite{keren2011model,qin2012survey}.
 
 
@@ -130,106 +130,68 @@ and data-driven algorithms have been proposed for  planning~\cite{fern2011first,
 
 
 % General statement: we focus on the cases where both model and obsevations are available
+In spite of the current dominance of data-driven approaches, we believe that it is still beneficial to use models in reasoning tasks.
 It is the aim of this proposal to study the interplay between data-driven and model-based approaches 
-for {\bf solving planning problems and diagnosis problems in settings where both model and observations are available}. These kind of model-and-observations settings occur frequently in practice and cover a broad range of settings, from having a perfect model of the environment with a limited  number of observations and having a large set of observations and partial and uncertain knowledge about the environment. 
+for {\bf solving planning problems and diagnosis problems in settings where both models and observations are available}. These kind of model-and-observations settings occur frequently in practice and cover a broad range of settings, from having a perfect model of the environment with a limited  number of observations and having a large set of observations and partial and uncertain knowledge about the environment. 
 
 
-Specifically, we intend to study how to solve planning problems and diagnosis problems in two type of model-and-observation settings: (1) where an accurate model of the world dynamics is given along with a set of observations, and (2) where the given model is partial and possibly inaccurate. 
-In the first setting, while reasoning can be done without the given observations, we will explore ways in which observations can speedup it up. In the second setting the observations have a larger role, being useful also as means for better understanding the real world dynamics. 
+Specifically, we intend to study how to better solve planning and diagnosis problems from both ends of this spectrum.
+%in two type of model-and-observation settings: (1) where an accurate model of the world dynamics is given along with a set of observations, and (2) where the given model is partial and possibly inaccurate. 
+%In the first setting, 
+At the one extreme, while reasoning can be done without the given observations, we will explore ways in which observations can speed it up. 
+%In the second setting 
+At the other, the observations have a larger role, being useful also as means for better understanding the real world dynamics. 
+
+% Focus #2: observations and some partial model 
+%The second model-and-observation setting we will explore is where a large set of observations are available but there is only a partial and possibly only approximately correct model of the world dynamics is given. 
+For the second setting, we will build on Valiant's PAC semantics ~\cite{valiant2000robustLogics,valiant2000neuroidal}. % as a framework for learning and reasoning with an incomplete and approximately accurate model. 
+PAC semantics provides an elegant and theoretically sound framework to learn 
+rules of the environment dynamics that are correct in some cases with high likelihood (hence the name, ``{\underline P}robably {\underline A}pproximately {\underline C}orrect''). Such rules allow a natural integration of the given partial model as additional PAC semantic rules with high confidence. %as we will show in the proposed research, can still be useful for important reasoning tasks such as planning and diagnosis.
 
 
 % We are awsome for this
-The collaboration between the US PI and Israeli PI is especially suitable to perform this study, as most of PI Juba's work has been on data-driven mechanisms, while most of PI Stern's work has been on model-based algorithms. Moreover, both PIs have started, independantly, to work on how to combine model-based and data-driven methods specifically for planning and for diagnosis: PI Juba's work lay the theoretical foundation for such combination~\cite{juba2016aaai,juba2016jmlr} while PI Stern's proposed practical planning and diagnosis algorithms that effectively use both model and observations~\cite{elmishali2016dataAugmented,stern2011probably,stern2012search}.
+The collaboration between the US PI and Israeli PI is especially suitable for this study, as most of PI Juba's work has been on data-driven mechanisms, while most of PI Stern's work has been on model-based algorithms. Moreover, both PIs have independently started to work on how to combine model-based and data-driven methods specifically for planning and for diagnosis: PI Juba's work laid theoretical foundations for such a combination~\cite{juba2016aaai,juba2016jmlr} while PI Stern's proposed practical planning and diagnosis algorithms that effectively use both models and observations~\cite{elmishali2016dataAugmented,stern2011probably,stern2012search}.
 
  
-
-
-
-\subsection{Related Work}
-\note{We might want to cut this section short, to say one page.}
-As we handle fundamental AI tasks -- planning and diagnosis -- there is an abudnance of related work. 
-Below we briefly mention those work that directly consider model-based reasoning and various aspects of learning. 
-
-
-\subsubsection{Reinforcement Learning}
-\label{reinforcementLearning}
- Most of the previous work on learning and planning follows a reinforcement learning approach. The main difficulty with reinforcement learning is that it combines the problems of learning an planning with the inherently hard problem of {\em exploring} an unknown environment. For example, when standard reinforcement learning approaches are analyzed~\cite{kearns2002POMDPsample,shani2005modelPOMDP}, the bounds feature an exponential dependence on the time horizon (possibly in the form of the discount factor), a polynomial dependence on the number of distinct states (which is exponential in the number of fluents in planning), or both. Any work that takes the initial step of casting the problem as solving the MDP over belief states immediately pays a penalty that the representation of these belief states is doubly exponential in the number of attributes describing the state.  In order to avoid these inherent barriers, it is necessary to focus on a special case of the problem somehow, but the known natural special cases of reinforcement learning are largely either still too hard or too restrictive to capture natural planning domains. Work on restricting the family of policies to, for example, finite-memory policies, still yields an intractable problem~\cite{meuleau1999finitestate}. Other works assume that either a ``best'' action always gives substantially better utility than the alternatives~\cite{fern2006policyIteration} which certainly does not capture most planning domains, or else simply assume that it is known {\em how} we can find a loss-minimizing policy~\cite{lazaric2010policyIteration}, and thus do not actually address the planning problem.
-
-
-\subsubsection{Learning in Classical Planning}
-% Related work - learning is not new in planning
-%Learning from trajectories how to plan more efficiently is not novel. 
-A different line of work deals with incorporating learning techniques in classical -- STRIPS-like -- planning. For example, the Learning as search optimization (LaSO) framework uses learning to identify which states are ``good'' and which are ``bad''
-in the context of Beam Search, where good states are those that should be expanded (i.e., stay in the beam) and bad states can be pruned~\cite{xu2007discriminative}. 
-Others have studies how to learn from past trajectories how to improve various planning heuristic such as Fast Forward~\cite{yoon2006learning} and Pattern Database~\cite{samadi2008learning}. Jabbari Arfaee et al.~\cite{arfaee2011learning} proposed a bootstrapping techniques for solving a set of problems in a large state space. 
-Phillips et al.~\cite{phillips2012graphs} proposed to build an {\em Experience Graph} (E-graph) that is a graph composed of a set of observed trajectories. Then, they proposed a planning algorithm that the search towards directions that are part of the E-graph. 
-Similar efforts were done in the context of local search, 
-where Griener~\cite{greiner1996palo} proposed to learn
-the landscape of the objective function in order to get a probabilistic guarantee over the likelihood that a local optimum have been reached. 
-All the above highlights the importance that the planning community gives to  finding novel and effective ways to incorporate knowledge about past data -- e.g., trajectories -- in the classical planning process. In fact, there is even a recently added track in the international planning competition is specifically dedicated to the combination of learning and plannning~\cite{fern2011first}.  
-
-
-
-
-% Since planning and learning work so well together, we need to better understand this relationship
-While the above recent success stories of learning for planning is encouraging, a theoretical framework for incorporating prior knowledge is still lacking. We aim to close this gap and provide a {\em theoretical framework for incorporating knowledge from observed trajectories in the process of model-based planning}. Such a framework is sourly needed in order to understand the extent to which trajectories can help to improve planning, as well as to understand how using learning-based heuristic affect the properties of the search algorithms that uses them. In addition, we propose concrete algorithms that will take advantage of this theory to plan more efficiently. 
-
-
-
-\subsubsection{Diagnosis with an Imperfect Model}
-%\note{TODO For Roni}
-
-
-Niggemann et al.~\cite{niggemann2012learning} recently proposed a method for learning behavioral models of a system that is described by a hybrid timed automata. They showed that given enough samples they will accurately learn the system, but the number of samples is very large. This learned model was used so far for fault detection~\cite{niggemann2012learning} but not for diagnosis (fault isolation).
-
-Sadov et al.~\cite{sadov2010towards} attempted to learn a partial model and use it to diagnose. Their focus was on how to minimize the number of samples until a useful enough model is obtained. 
-
-%\subsection{Diagnosis with an Incomplete Model}
-Dexter and Benouarets~\cite{dexter1997model} proposed a model-based algorithm for fault detection and diagnosis that is designed for cases where one has an inaccurate model. Their algorithm identifies faulty components using fuzzy matching, comparing the observations against several fuzzy reference models. 
-
-There is also a line of work on {\em robust fault detection and isolation} (robust FDI)~\cite{chen2012robust,frank1997survey} that is specifically designed to develop fault detection and diagnosis algorithm that are robust to inaccuracies in the system model. Most work on robust FDI do not apply logic-based reasoning and attempt to model the possible ways in which the model can be inaccurate. This is orthogonal to our approach, where we do not assume such a-priori knowledge about the inaccuracy of the model.  
-
-
-Bayesian networks have also been proposed as a model for performing diagnosis tasks~\cite{darwiche2009modeling,el1995diagnosing}, where reasoning about the most probable diagnosis correspond to marginalization of the Bayesian network. This can be combined with algorithm that learn Bayesian network from observations, and is indeed a special case of the diagnosis problem that we will consider. 
-
-%\note{TODO For Roni: say something about diagnosis with Bayesian Networks}
 
 \section{Objectives and Significance}
 %2. From BSF guidelines: Objectives and significance of the research
 
-The first model-and-observations setting we will study is where an accurate model of the world dynamics is given along with a set of observations. In this setting we will pursue the following concrete set of objectives. 
+%The first setting we will study is where an accurate model of the world dynamics is given along with a set of observations. In this setting we will pursue the following concrete set of objectives. 
+We propose to pursue the following concrete set of objectives:
 
-{\bf Objective \#1. Learning and exploiting the relation between planning heuristics and actual cost.} 
-We will explore how to learn from past trajectories (plans) the probabilistic relation between planning heuristics and the costs they estimate. Given such knowledge, we will develop intelligent planning algorithms that exploit this knoweldge. Prior work by PI Stern has demonstrated the potential of such approaches~
+\paragraph{Objective \#1. Learning and exploiting the relation between planning heuristics and actual cost.} We will explore how to learn from past trajectories (plans) the probabilistic relation between planning heuristics and the costs they estimate. Given such knowledge, we will develop planning algorithms that exploit this knowledge. Prior work by PI Stern has demonstrated the potential of such approaches~
 \cite{stern2011probably,stern2012exploring,stern2014potential}. % but major challenges are ...
+However, several fundamental research questions still remain: What assumptions are needed to properly generalize from past observations to future planning sessions? What are the theoretical guarantees one can achieve with these observations? And, how many observations are needed to effectively assist the planner? Answering these questions is exactly what has driven the collaboration with PI Juba, who is an expert in learning theory. 
 
-{\bf Objective \#2. Learning and integrating a fault prediction model into MBD algorithms.} 
-We propose to learn from observations a {\em fault prediction model}, and then explore how such a learned fault predictor can augment existing MBD algorithms. 
-One particularly attractive direction we will pursue is to use these predictions as a means to bias MBD algorithms towards finding diagnoses that are more likely to be true. This is sourly needed as MBD algorithms are known to return an overwhelmingly large number of possible diagnoses~\cite{stern2015many}. Being able to identify the more likely diagnoses will allow higher diagnostic accuracy and more informed decision making. Preliminary results on this data-augmented approach for diagnosis are promising~\cite{elmishali2016dataAugmented}. 
+
+ 
+
+% PAC semantics is cool, but they have not been used for serious reasoning tasks :)
+\paragraph{Objective \#2. Learning PAC semantic rules for planning.}
+PAC semantics have been applied to classical learning tasks such as prediction of missing words in text~\cite{michael2008first} and user profiling in a recommender system~\cite{semeraro2009knowledge}. Planning is a fundamentally different type of reasoning task in that it is inherently about causal relationships over a changing distribution. PI Juba has started to explore the challenges raised when using PAC semantics for planning~\cite{juba2016jmlr}. Key questions arise, such as how to identify which state variables are part of an observed action precondition and how to identify rules that are effective for planning. We aim to address these fundamental questions.
+
+
+\paragraph{Objective \#3. Planning with PAC semantic rules.}
+In addition to learning a set of PAC semantic rules for planning, we will develop effective planning algorithms that use these rules. We will explore the relation between planning with PAC semantic rules and other planning formalisms, and in particular consider adapting existing planning algorithms for this purpose. The initial work by PI Juba suggests that intergrating learning into planning simplifies both tasks~\cite{juba2016jmlr}. 
+
+
+\paragraph{Objective \#4. Learning and integrating a fault prediction model into MBD algorithms.} 
+We propose to learn a {\em fault prediction model} from observations, and then explore how such a learned fault predictor can augment existing MBD algorithms. 
+One particularly attractive direction we will pursue is to use these predictions as a means to bias MBD algorithms towards finding diagnoses that are more likely to be true. This is sorely needed as MBD algorithms are known to return an overwhelmingly large number of possible diagnoses~\cite{stern2015many}. Being able to identify the more likely diagnoses will allow higher diagnostic accuracy and more informed decision making. PI Stern's initial results on this data-augmented approach for diagnosis are promising~\cite{elmishali2016dataAugmented}. But, a more rigorous theoretical foundation is needed to enable us to answer key questions such as how many observations are needed to effectively improve diagnosis accuracy, what is required to enable the prediction of future faults using past observations, and whether or not we can transfer this knowledge to other, similar systems. Again, the collaboration between the PIs is especially suitable to answer these questions. 
+
+%what assumptions are needed to properly generalize from past observations to future planning sessions? what are the theoretical guarantees one can achieve with these observations? and how many observations are needed to effectively assist the planner? Answering these questions is exactly what has driven the collaboration with PI Juba, which is an expert in learning theory.
 
 
 
 % Challenges
-While the preliminary results of PI Stern for the two objectives above are encouraging, they give rise to several fundamental research questions: what assumptions are needed to properly generalize from past observations to future reasoning? what are the theoretical guarantees one can achieve with these obsrevations? and how many observations are needed to effectively assist the reasoning process? Answering these questions is exactly what has driven the collaboration with PI Juba, which is an expert in learning theory. 
+%\note{TODO: Distribute this paragraph throughout this section}While the preliminary results of PI Stern for the two objectives above are encouraging, they give rise to several fundamental research questions: what assumptions are needed to properly generalize from past observations to future reasoning? what are the theoretical guarantees one can achieve with these observations? and how many observations are needed to effectively assist the reasoning process? Answering these questions is exactly what has driven the collaboration with PI Juba, which is an expert in learning theory. 
 
 
-% Focus #2: observations and some partial model 
-The second model-and-observation setting we will explore is where a large set of observations are available but there is only a partial and possibly only approximately correct model of the world dynamics is given. We propose to use Valiant's PAC semantics ~\cite{valiant2000robustLogics,valiant2000neuroidal} as a framework for learning and reasoning in such settings.  PAC semantics provides an elegant and theoretically sound framework to learn 
-rules of the environment dynamics that are correct in some cases with high likelihood (hence, the probably approximately correct -- PAC -- term). 
-Such rules are easier to learn and allow a natural integration of the given partial model as additional PAC semantic rules with high confidence. %as we will show in the proposed research, can still be useful for important reasoning tasks such as planning and diagnosis. 
 
-% PAC semantics is cool, but they have not been used for serious reasoning tasks :)
-{\bf Objective \#3. Learning PAC semantic rules for planning.}
-PAC semantics have been applied to classical learning tasks such as prediction of missing words in text~\cite{michael2008first} and user profiling in a recommender system~\cite{semeraro2009knowledge}, and has yet to be applied to planning, which is a fundamentally different type of reasoning tasks that requires complex chaining of rules. PI Juba's preliminary work have started to explore the challenges raised when using PAC semantics for planning~\cite{juba2016jmlr}. Key questions arise, such as how to identify which state variables are part of an observed action precondition? how to identify which rules are most effective for planning? We aim to address this fundamental questions.
-
-
-{\bf Objective \#4. Planning with PAC semantic rules.}
-After learning a set of PAC semantic rules for planning, we will develop effective planning algorithms that use these rules. Our key approach for achieving this objective is to explore the relation between planning with PAC semantic rules and other planning formalisms, and in particular consider adapting existing planning algorithms for this purpose.  
-
-
-{\bf Objective \#5. Using PAC semantics for MBD.} 
-As for the planning case, we will develop algorithms to learn 
-from observations relevant PAC semantic rules and develop corresponding diagnosis algorithm that use these rules. 
+\paragraph{Objective \#5. Using PAC semantics for MBD.} 
+As with planning, we will develop algorithms to learn 
+relevant PAC semantic rules from observations and develop diagnosis algorithms that use these rules. There are few attempts to perform model-based reasoning with approximately correct models, and thus we expect the resulting MBD algorithms to have a substantial impact on practitioners.  
 
 
 
@@ -243,6 +205,57 @@ from observations relevant PAC semantic rules and develop corresponding diagnosi
 
 
 
+\section{Related Work}
+\note{We might want to cut this section short, to say one page.}
+As we handle fundamental AI tasks -- planning and diagnosis -- there is an abundance of related work. 
+Below we briefly mention works that directly consider model-based reasoning and various aspects of learning. 
+
+
+\subsection{Reinforcement Learning}
+\label{reinforcementLearning}
+ Most of the previous work on learning and planning follows a reinforcement learning approach. The main difficulty with reinforcement learning is that it combines the problems of learning an planning with the inherently hard problem of {\em exploring} an unknown environment. For example, when standard reinforcement learning approaches are analyzed~\cite{kearns2002POMDPsample,shani2005modelPOMDP}, the bounds feature an exponential dependence on the time horizon (possibly in the form of the discount factor), an exponential dependence on the number of attributes, or both. Any work that takes the initial step of casting the problem as solving the MDP over belief states immediately pays a penalty that the representation of these belief states is doubly exponential in the number of attributes.  In order to avoid these inherent barriers, it is necessary to focus on a special case of the problem somehow, but the known natural special cases of reinforcement learning are largely either still too hard or too restrictive to capture natural planning domains. Work on restricting the family of policies to, for example, finite-memory policies, still yields an intractable problem~\cite{meuleau1999finitestate}. Other works assume that either a ``best'' action always gives substantially better utility than the alternatives~\cite{fern2006policyIteration} which certainly does not capture most planning domains, or else simply assume that it is known {\em how} we can find a loss-minimizing policy~\cite{lazaric2010policyIteration}, and thus do not actually address the planning problem.
+
+
+\subsection{Learning in Classical Planning}
+% Related work - learning is not new in planning
+%Learning from trajectories how to plan more efficiently is not novel. 
+A different line of work deals with incorporating learning techniques in classical -- STRIPS-like -- planning. For example, the Learning as search optimization (LaSO) framework uses learning to identify which states are ``good'' and which are ``bad''
+in the context of Beam Search, where good states are those that should be expanded (i.e., stay in the beam) and bad states can be pruned~\cite{xu2007discriminative}. 
+Others have studied how to learn from past trajectories how to improve various planning heuristic such as Fast Forward~\cite{yoon2006learning} and Pattern Database~\cite{samadi2008learning}. Jabbari Arfaee et al.~\cite{arfaee2011learning} proposed a bootstrapping techniques for solving a set of problems in a large state space. 
+Phillips et al.~\cite{phillips2012graphs} proposed to build an {\em Experience Graph} (E-graph) that is a graph composed of a set of observed trajectories. Then, they proposed a planning algorithm that guides the search towards directions that are part of the E-graph. 
+Similar efforts were done in the context of local search, 
+where Griener~\cite{greiner1996palo} proposed to learn
+the landscape of the objective function in order to get a probabilistic guarantee over the likelihood that a local optimum have been reached. 
+Indeed, the planning community has sought novel and effective ways to incorporate knowledge about past data -- e.g., trajectories -- into the classical planning process, and there is even a recently added track in the international planning competition is specifically dedicated to the combination of learning and plannning~\cite{fern2011first}.  
+
+
+
+
+% Since planning and learning work so well together, we need to better understand this relationship
+While the above successes of learning for planning is encouraging, a theoretical framework for incorporating prior knowledge in model-based is still lacking. {\em We aim to close this gap and provide such a framework.} Such a framework is sorely needed in order to understand the extent to which trajectories can help to improve planning, as well as to understand how using learning-based heuristics affect the properties of the search algorithms that use them. In addition, we will propose concrete algorithms that will take advantage of this theory to plan more efficiently. 
+
+
+
+\subsection{Diagnosis with an Imperfect Model}
+%\note{TODO For Roni}
+
+
+Niggemann et al.~\cite{niggemann2012learning} recently proposed a method for learning behavioral models of a system that is described by a hybrid timed automata. They showed that given enough samples they will accurately learn the system, but the number of samples is very large. This learned model was used so far for fault detection~\cite{niggemann2012learning} but not for diagnosis (fault isolation).
+
+Sadov et al.~\cite{sadov2010towards} attempted to learn a partial model and use it to diagnose. Their focus was on how to minimize the number of samples until a useful enough model is obtained. 
+
+%\subsection{Diagnosis with an Incomplete Model}
+Dexter and Benouarets~\cite{dexter1997model} proposed a model-based algorithm for fault detection and diagnosis that is designed for cases where one has an inaccurate model. Their algorithm identifies faulty components using fuzzy matching, comparing the observations against several fuzzy reference models.  \note{Roni: how will our proposed work advance the state of the art over these existing methods?}
+
+There is also a line of work on {\em robust fault detection and isolation} (robust FDI)~\cite{chen2012robust,frank1997survey} that is specifically designed to develop fault detection and diagnosis algorithm that are robust to inaccuracies in the system model. Most work on robust FDI do not apply logic-based reasoning and instead attempt to model the possible ways in which the model can be inaccurate. This is orthogonal to our approach, where we do not assume such a-priori knowledge about the inaccuracy of the model.  
+
+
+Bayesian networks have also been proposed as a model for performing diagnosis tasks~\cite{darwiche2009modeling,el1995diagnosing}, where reasoning about the most probable diagnosis correspond to marginalization of the Bayesian network. This can be combined with algorithms that learn Bayesian networks from observations, and is indeed a special case of the diagnosis problem that we will consider. 
+
+%\note{TODO For Roni: say something about diagnosis with Bayesian Networks}
+
+
+
 %\section{Detailed Description of the Proposed Research}
 %3. From BSF guidelines: Comprehensive description of the methodology and plan of operation, including the respective roles of the Israeli and American principal investigators;
 \section{Methodology and Plan of Operation}
@@ -250,25 +263,27 @@ from observations relevant PAC semantic rules and develop corresponding diagnosi
 
 
 % Key setting: we have a model and observations
-The main setting the proposed research will focus on is that we are given two types of data as input: 
-a {\em model} and a set of {\em observations}. The model represents some prior knowledge about the rules that govern the behavior of the world. The observations represents data collected about some  interactions with the world in the past. In some sense, the observations represents some knowledge about {\em how the world behaved in the past} and the model also represents knowledge about {\em how the world is expected to behave in the future}. What exactly does these model and observations comprise depends on the reasoning task at hand. In the proposed research we focus on reasoning for two classical AI tasks: planning and diagnosis. 
+In the settings we consider, we are given two types of data as input: 
+a {\em model} and a set of {\em observations}. The model represents some prior knowledge about the rules that govern the behavior of the world and the observations represents data collected about some  interactions with the world in the past. 
+%In some sense, the observations represents some knowledge about {\em how the world behaved in the past} and the model also represents knowledge about {\em how the world is expected to behave in the future}. What exactly does these model and observations comprise depends on the reasoning task at hand. 
+In the proposed research we focus on reasoning for two classical AI tasks: planning and diagnosis. 
 
 
 
 \subsection{Data-Augmented Planning with PAC Heuristic Search}
 
 % What is the model in planning
-In planning, the task is to create a plan for an agent to follow in order to achieve a designated goal. A model in the planning context is any information the agent has about the current state and how its actions impact the world. For example, in classical planning~\cite{fikes1971strips}, a model can be a description of the pre-conditions and effects of each action given in PDDL (the Planning Domain Description Language)~\cite{mcdermott1998pddl}. In more involved planning models such as Markov Decision Processes (MDP) and Partially Observable MDPs, the model can also include the transition and observation functions that capture knowledge about the stochatic nature of the world. 
+In planning, the task is to create a plan for an agent to follow in order to achieve a designated goal. A model in the planning context is any information the agent has about the current state and how its actions impact the world. For example, in classical planning~\cite{fikes1971strips}, a model can be a description of the pre-conditions and effects of each action given in PDDL (the Planning Domain Description Language)~\cite{mcdermott1998pddl}. In more involved planning models such as Markov Decision Processes (MDP) and Partially Observable MDPs, the model can also include the transition and observation functions that capture knowledge about the stochastic nature of the world. 
 
 
 % What are observations in planning
-Observations in the context of planning are {\em trajectories} of actions performed by the agent to get from one state to another. These trajectories as sequences of the form $\tuple{ s_1, a_1, s_2, a_2, \ldots}$, where $s_i$ is a state, $a_i$ is the action performed when at state $s_i$, and $s_{i+1}$ is the state the agent has reached after performing action $a_i$ at state $s_i$. In the most minimal sense observing a trajectory simply reveals that it was possible to get from state $s_i$ to state $s_{i+1}$ by applying action $a_i$. % Maybe talk about partial observablity?
+Observations in the context of planning are {\em trajectories} of actions performed by the agent to get from one state to another. These trajectories as sequences of the form $\tuple{ s_1, a_1, s_2, a_2, \ldots}$, where $s_i$ is a state, $a_i$ is the action performed when at state $s_i$, and $s_{i+1}$ is the state the agent has reached after performing action $a_i$ at state $s_i$. In a minimal sense, observing a trajectory simply reveals that it was possible to get from state $s_i$ to state $s_{i+1}$ by applying action $a_i$. % Maybe talk about partial observablity?
 
 
 % Sometimes we have complete models, so we can plan. But it is still so hard!
-In some cases, a complete model of the world may provide a sufficient form of abstraction so that a plans generate for it are useful in practice~\cite{ruml2011line,robinson2014cost,hoffmann2015simulated,hoffmann2007web}. Indeed, much work has been devoted throughout the years on solving classical planning problems~\cite{ghallab2004automated}. A key challenge in such cases is the complexity of finding a plan, especially if one wishes to find plans of optimal or approximately optimal cost. 
+In some cases, a complete model of the world may suffice in the sense that plans generated for it are useful in practice~\cite{ruml2011line,robinson2014cost,hoffmann2015simulated,hoffmann2007web}. Indeed, much work has been devoted throughout the years on solving classical planning problems~\cite{ghallab2004automated}. A key challenge in such cases is the complexity of finding a plan, especially if one wishes to find plans of optimal or approximately optimal cost. 
 %which is PSPACE hard in classical planning~\cite{bylander1994computational}. % or worse. %cite some impossibility results of POMDP
-We propose to explore how to use observations -- i.e., trajectories of actions performed by the agent in the past -- can help to meet this complexity challenge. %The first is to use the given observations to automatically evaluate how different planning algorithms and heuristics perform, and adapt the planning algorithms accordingly. The second is to learn from the given observations special cases of the general planning problem that can be solved efficiently in the domain at hand. We detail both  approaches below. 
+We propose to explore how observations -- i.e., trajectories of actions performed by the agent in the past -- can help us meet this complexity challenge. %The first is to use the given observations to automatically evaluate how different planning algorithms and heuristics perform, and adapt the planning algorithms accordingly. The second is to learn from the given observations special cases of the general planning problem that can be solved efficiently in the domain at hand. We detail both  approaches below. 
 
 
 
@@ -277,13 +292,13 @@ We propose to explore how to use observations -- i.e., trajectories of actions p
 % Option #1: PAC Search: what to do with trajectories? how many are useful?
 %\subsubsection{Probably Approximately Correct Heuristic Search} 
 % Approximately optimal
-In particular, we propose to develop the Probably Approximately Correct Heuristic Search (PAC Search) framework, which is intended to allow probabilistic solution quality guarantees even for deterministic planning~\cite{stern2011probably,stern2012search}. To explain this framework, which was suggested in a preliminary work by PI Stern~\cite{stern2011probably,stern2012search}, we provide the following brief background. 
+In particular, we propose to develop the Probably Approximately Correct Heuristic Search (PAC Search) framework, which is intended to allow probabilistic solution quality guarantees even for deterministic planning~\cite{stern2011probably,stern2012search}. This framework, which was suggested in earlier work by PI Stern~\cite{stern2011probably,stern2012search}, is recalled next. 
 
 \subsubsection{Planning with Heuristic Search}
-{\em Graph search} is a fundamental problem solving technique that is commonly used to solve planning problem, where the corresponding graph is a graph whose vertices represent states and whose edges represent possible state transitions that are due to applying some action. A plan is thus a path in such a graph, and graph search algorithm search for a plan by searching over paths in this graph. A plan's cost is the sum over the actions performed in that plan. Graph search planning algorithm explore a usually very large space of possible trajectories, aiming to find a trajectory that forms a {\em sufficient plan}. What regards as a sufficient plan depends on the requirements set by the user: in some cases only optimal -- lowest cost -- plans are sufficient while in other cases sub-optimal plans are also acceptable. Since finding optimal plans can be very difficult a common compromise is to require solutions that are {\em approximately optimal}, in the sense that a solution is sufficient if its cost is no larger than $1+\epsilon$ times the cost of the optimal solution, where $\epsilon$ is a parameter set by the user. Such algorithms are called {\em bounded-suboptimal search algorithms}. 
+{\em Graph search} is a fundamental problem solving technique that is commonly used to solve planning problems. The graph for a planning problem has vertices representing states and edges representing the possible state transitions that occur due to some action. A plan is thus a path in such a graph, and graph search algorithms search for a plan by searching over paths in this graph. A plan's cost is the sum over the actions performed in that plan. Graph search planning algorithms usually explore a large space of possible trajectories with the aim of finding a trajectory that forms a {\em sufficient plan}. What to regard as a ``sufficient'' plan depends on the requirements set by the user: in some cases only optimal -- lowest cost -- plans are sufficient, while in other cases sub-optimal plans are also acceptable. Since finding optimal plans can be very difficult, a common compromise is to require solutions that are {\em approximately optimal}, in the sense that a solution is sufficient if its cost is no larger than $1+\epsilon$ times the cost of the optimal solution, where $\epsilon$ is a parameter set by the user. Such algorithms are called {\em bounded-suboptimal search algorithms}. 
 
 
-{\em Heuristic search algorithms} are a popular type of graph search algorithm that use a {\em heuristic function} to guide their search. The heuristic function is usually a function $h(\cdot)$ that maps a state to an estimate of the cost of a plan from that state to a goal. For a state $s$, an optimal heuristic fuction, denoted $h^*(s)$, returns the cost of the optimal plan from $s$ to a goal. A heurstic $h(\cdot)$  is said to be {\em admissible} if for every node $n$ along an optimal path it holds that $h(n)\leq h^*(n)$. Fundamental heuristic search algorithms like A$^*$~\cite{hart1968formal} and IDA$^*$~\cite{korf1985depth} are guaranteed to return optimal solution when using an admissible heuristic. Other search algorithms, such as Weighted A*~\cite{pohl1973avoidance}, EES~\cite{thayer2011bounded}, and Dynamic Potential Search~\cite{gilon2016dynamic}, can use admissible heuristics to return approximately optimal solutions (usually in much faster runtime). 
+{\em Heuristic search algorithms} are a popular type of graph search algorithms that use a {\em heuristic function} to guide their search. The heuristic function is usually a function $h(\cdot)$ that maps a state to an estimate of the cost of a plan from that state to a goal. For a state $s$, an optimal heuristic function, denoted $h^*(s)$, returns the cost of the optimal plan from $s$ to a goal. A heurstic $h(\cdot)$  is said to be {\em admissible} if for every node $n$ along an optimal path it holds that $h(n)\leq h^*(n)$. Fundamental heuristic search algorithms like A$^*$~\cite{hart1968formal} and IDA$^*$~\cite{korf1985depth} are guaranteed to return optimal solution when using an admissible heuristic. Other search algorithms, such as Weighted A*~\cite{pohl1973avoidance}, EES~\cite{thayer2011bounded}, and Dynamic Potential Search~\cite{gilon2016dynamic}, can use admissible heuristics to return approximately optimal solutions, usually with a much faster running time. 
 
 
 
@@ -291,7 +306,7 @@ In particular, we propose to develop the Probably Approximately Correct Heuristi
 
 
 % Approximately optimal sucks
-To date, search algorithm that return optimal or even approximately optimal are severely limited in that they relay on admissible heuristics, which are by construction conservative estimate and thus tend to be inaccurate. Consequently, bounded suboptimal search algorithm often continue the search for better plans even though their incumbent plan (the best plan found so far) is already approximately optimal. In addition, they are limited in their ability to learn from observed trajectories~\cite{thayer2011bounded,phillips2012graphs}.
+To date, search algorithms that return optimal or even approximately optimal plans have been severely limited by their reliance on admissible heuristics, which are by definition conservative estimates, and thus tend to be inaccurate. Consequently, bounded suboptimal search algorithm often continue the search for better plans even though their incumbent plan (the best plan found so far) is already approximately optimal. In addition, they are limited in their ability to learn from observed trajectories~\cite{thayer2011bounded,phillips2012graphs}.
 
 \subsubsection{PAC Search}
 % PAC is so great. It will make world peace. 
@@ -309,7 +324,7 @@ While PI Stern's initial study of PAC search showed promising results~\cite{ster
 
 
 % Second challenge - sample set
-A second impediment to the wide-spread adoption of PAC search, is that there is no clear guideline for how many trajectories are needed to learn meaningful information about the likelihood of a state to lead to a goal. This is a manifestation of the classical sample set complexity problem that is often studied in the Machine Learning literature. Indeed, PI Juba has vast experience in performing such analysis~\cite{goldreich2012theory,juba2013ijcai,juba2016jmlr,juba2016aaai}. Thus, the collaboration between the PIs is especially suitable to address these challenges. 
+A second impediment to the wide-spread adoption of PAC search, is that there are no clear guidelines as to how many trajectories are needed to learn meaningful information about the likelihood of a state to lead to a goal. This is a problem of determining the {\em sample complexity}, that is often studied in Machine Learning. Indeed, PI Juba has vast experience in performing such analyses~\cite{goldreich2012theory,juba2013ijcai,juba2016jmlr,juba2016aaai}. Thus, the collaboration between the PIs is especially suited to addressing these challenges. 
 
 
 
@@ -317,25 +332,26 @@ A second impediment to the wide-spread adoption of PAC search, is that there is 
 
 
 % What is diagnosis. It is important
-{\em Automated diagnosis} (DX) is the second reasoning task for which we investigate how to exploit both model and observations. The DX problem is to find plausible explanations to an observed abnormally behaving system. Such explanations -- also referred to as {\em diagnoses} -- usually point to one or more components of the observed system that may be faulty. 
-Hardware and software systems these days are growing in complexity, and thus effective DX algorithms are crucial. 
+{\em Automated diagnosis} (DX) is the second reasoning task for which we investigate how to exploit both model and observations. The DX problem is to find plausible explanations to an observed abnormal behavior of a system. Such explanations -- also referred to as {\em diagnoses} -- usually point to one or more components of the observed system that may be faulty. 
+Effective DX algorithms are crucial to cope with the growing complexity of hardware and software systems. 
 
 
 % Model-based and data-driven for DX: different inputs
-Several approaches have been proposed to solve the DX problem. Two prominent approaches are {\em model-based} and {\em data-driven}. In both approaches some observations of the current behavior are given, denoted by $OBS$. In Model-Based Diagnosis (MBD), we are also given a model of the diagnosed system, which is assumed to describe how  components are expected to behave when functioning properly. In some cases a stronger model is given that also describes the possible behavior of the system components when they are faulty (possibility distinguishing between multiple fault modes). In data-driven diagnosis (DDD), instead of a model of the diagnosed system we are given a large set of such past observations. Importantly, these past observations differ from $OBS$ described above in that they represent observations made in the past. Moreover, each past observation is paired with its root cause -- the set of components that were faulty when that observation was taken. Observe that here too we have the same distinction as in planning -- the data-driven approach has information about how the world behaved in the past while the model-based approach has also knowledge about how the world is expected to behave in the future. 
+Both  {\em model-based} and {\em data-driven} approaches have been proposed to solve the DX problem. In both approaches some observations of the current behavior are given, denoted by $OBS$. In Model-Based Diagnosis (MBD), we are also given a model of the diagnosed system, which describes how  components are expected to behave when they are functioning properly. In some cases a stronger model is given that also describes the possible behavior of the system components when they are faulty (possibly distinguishing between multiple fault modes). In data-driven diagnosis (DDD), instead of a model of the diagnosed system, we are given a large set of past observations (whereas the given $OBS$ is a current observation).  Moreover, each past observation is paired with its root cause -- the set of components that were faulty when that observation was taken. 
+%Observe that here too we have the same distinction as in planning -- the data-driven approach has information about how the world behaved in the past while the model-based approach has also knowledge about how the world is expected to behave in the future. 
 
 
 % Model-based and data-driven for DX: different algorithmic approaches
-MBD algorithms usually use inference methods to find diagnoses that will be consistent with both model and $OBS$. In contrast, DDD algorithms employ statistical techniques to learn an efficient function, e.g., a decision tree, that will map future observations to their correct diagnosis. 
-MBD has been successfully applied in a range of domains~\cite{williams96,struss2003model,wotawa2002model}, and lays on solid theoretical grounds~\cite{deKleer1987diagnosing,reiter1987theory}. However, MBD has two key limitations. First, it requires a model of the system, which is expensive to create and is often inaccurate. Second, solving a diagnosis problem with MBD is, in terms of computational complexity, intractable~\cite{bylander1991computational}. Computing a diagnosis with DDD, on the other hand, is usually very fast as most effort is done offline during training. However, DDD algorithms lacks, however, formal guarantees to its correctness and performs poorly for observations with multiple faults~\cite{keren2011model}. 
+MBD algorithms usually use inference methods to find diagnoses that will be consistent with both the model and $OBS$. In contrast, DDD algorithms employ statistical techniques to learn an efficient function, e.g., a decision tree, that will map future observations to their correct diagnosis. 
+MBD has been successfully applied in a range of domains~\cite{williams96,struss2003model,wotawa2002model}, and has solid theoretical foundations~\cite{deKleer1987diagnosing,reiter1987theory}. However, MBD has two key limitations. First, it requires a model of the system, which is expensive to create and is often inaccurate. Second, solving a diagnosis problem with MBD is computationally intractable~\cite{bylander1991computational}. Computing a diagnosis with DDD, on the other hand, is usually very fast as most effort is done offline during training. However, DDD algorithms lack formal guarantees of their correctness and perform poorly for observations with multiple faults~\cite{keren2011model}. 
 
 
 
 % We will use our complementing expertise to provide both useful algorithms as well as theory for using both sources of information. This will be awesome
-The fundamental tenant of our proposed research is that MBD and DDD should complement each other, as they use different types of inputs, and both types of inputs are often available, in some form. Therefore, we propose to develop theory and algorithms that exploit both model -- to the extent that it is available -- and data about past observations, in an effort to enjoy the pros of both approaches. Below we describe the concrete approaches we will follow in this line of research.
+The fundamental tenant of our proposed research is that MBD and DDD should complement each other, as they use different types of inputs, and both types of inputs are often available in some form. 
+%Therefore, we propose to develop theory and algorithms that exploit both model -- to the extent that it is available -- and data about past observations, in an effort to enjoy the pros of both approaches. 
+Below we describe the concrete approaches we will follow in this line of research.
 
-% Focus on cases where the model is correct 
-First, we investigate how MBD and DDD can be integrated in scenarios where an accurate, even if incomplete models of the diagnosed system is available together with past observations. 
 
 
 \begin{figure}
@@ -349,35 +365,39 @@ First, we investigate how MBD and DDD can be integrated in scenarios where an ac
 
 % The problem: too much diagnoses
 \subsubsection{Model-Based Reasoning with Data-Driven Prioritization} 
+% Focus on cases where the model is correct 
+First, we investigate how MBD and DDD can be integrated in scenarios where an accurate but perhaps incomplete model of the diagnosed system is available together with past observations. 
 Most MBD algorithms are consistency-based, in the sense that they aim to return every diagnosis  that is consistent with the system model and observations. 
 Unfortunately, there can be many consistent diagnoses for a given set of observations, thus providing poor fault isolation~\cite{stern2015many}. 
-For example, Figure~\ref{fig:mbd-example} shows a simple DX problem where the diagnosed system is a small Boolean circuit. Components $A$, $D$, $C$, and $E$ are NOT gates, component $B_1$ is an OR gate, and components $B_2$ and $B_3$ are buffer gate (which are supposed to output the same value as their input). One possible diagnosis is that component $B_1$ is faulty, and have outputted zero instead of one. Similarly, either component $B_2$ or $B_3$ may be faulty, 
+For example, Figure~\ref{fig:mbd-example} shows a simple DX problem where the diagnosed system is a small Boolean circuit. Components $A$, $D$, $C$, and $E$ are NOT gates, component $B_1$ is an OR gate, and components $B_2$ and $B_3$ are buffer gate (which are supposed to output the same value as their input). One possible diagnosis is that component $B_1$ is faulty, and has output zero instead of one. Similarly, either component $B_2$ or $B_3$ may be faulty, 
 and there are also possible double fault diagnoses (i.e., diagnoses that assume two components are faulty): $\{ A,D \}$ and $\{C,E\}$. It is difficult to assess which of these five diagnoses is correct or more likely. 
 As shown in PI Stern's prior work, even if we only focus on minimal cardinality diagnoses (those with the smallest number of assumed faulty components) the number of possible diagnoses can be very large, even in standard MBD benchmarks~\cite{stern2015many}. Thus, MBD algorithms require some way to prioritize their results diagnoses. 
 
 
 % The solution: Bayesian reasoning. But that needs priors - DDD to save the day!!!
-This is exactly where we propose to employ a data-driven approach -- to prioritize and an informed way between consistent diagnoses. 
-DDD algorithms learn from past observations a function that classifies components as healthy or faulty given the current observations and other various model properties. These learned classification model often also provide some confidence measure that estimates the liklihood that the classification is correct. We propose to use this learned function in the diagnostic process to prioritize the consistent diagnoses. So, the resulting algorithm will be a combination of MBD algorithm for generating diagnoses and DDD algorithms to prioritize them. This hybrid model-and-data approach for MBD is very general, and our preliminary results on software diagnosis~\cite{elmishali2016dataAugmented} show promising results. 
+We propose to employ a data-driven approach to prioritize between consistent diagnoses in an informed way. 
+DDD algorithms learn a function from past observations that classifies components as healthy or faulty given the current observations and other various model properties. These learned classification models often also provide some confidence measure that estimates the likelihood that the classification is correct. We propose to use such learned functions to prioritize the consistent diagnoses. The resulting algorithm will be a combination of MBD algorithms for generating diagnoses and DDD algorithms to prioritize them. This hybrid model-and-data approach for MBD is very general, and our initial results on software diagnosis~\cite{elmishali2016dataAugmented} show promise. 
 
 % Future challenges
-We intend to formalize this data-augmented MBD approach and demonstrate its usefulness on a range of domains. Also, we will study the relation between the number of past observation we have, the size and structure of the analyzed system, and the expected usefulness of this data-augmented approach over the data-agnostic MBD approach. Since in many cases most past observations are of a healthy scenario and only few faulty scenarios are available, we will study how to build DDD models that can use mostly healthy scenarios and still be able to help in prioritizing diagnoses. An additional opportunity is to guide the MBD algorithm with knowledge from the DDD model. For example, MBD algorithms based on heursitic search, such as HA*~\cite{feldman2006two} and CDA*~\cite{williams2007conflict}, can guide their search towards adding earlier components that are more likely to be part of the diagnoses according to the DDD model. 
+We intend to formalize this data-augmented MBD approach and demonstrate its usefulness on a range of domains. We will also study the relationship between the number of past observations we have, the size and structure of the analyzed system, and the expected usefulness of this data-augmented approach over the data-agnostic MBD approach. Since in many cases most past observations are of a healthy scenario and only a few faulty scenarios are available, we will study how to build DDD models that can use mostly healthy scenarios and still help in prioritizing diagnoses. We will also seek to guide the MBD algorithm with knowledge from the DDD model. For example, MBD algorithms based on heursitic search, such as HA*~\cite{feldman2006two} and CDA*~\cite{williams2007conflict}, can guide their search towards adding earlier components that are more likely to be part of the diagnoses according to the DDD model. 
 
 
 %\note{I feel that we need more here. Maybe something about uncovering the theory behind this combination of data and model?}
-\subsubsection{Learning Plausible Diagnoses} 
-Observing past nominal and faulty behavior can also be used to speedup the diagnostic process. In particular, we propose to learn from observations special cases which are easy to diagnose. Indeed, it is well-known in the MBD literature that some types of system models are  easy to diagnose. Also, several techniques have been proposed to compile a given system model to an easy-to-diagnose model such as Decomposable Negation Normal Form~\cite{darwiche2001decomposable} and Ordered Binary Decision Diagrams (OBDDs)~\cite{torta2006onTheUse}. These compilation methods, however, sometimes results in a model that is exponentially larger than the original system model. 
+%\subsubsection{Learning Plausible Diagnoses} 
+\subsubsection{Faster Diagnosis Using Data} %% Maybe this is a more accurate title for what we are proposing?
+\note{This is a good candidate for cutting or folding into the previous section.}
+Observing past nominal and faulty behavior can also be used to speed up the diagnostic process. In particular, we propose to learn from observations special cases which are easy to diagnose. Indeed, it is well-known in the MBD literature that some types of system models are  easy to diagnose. Also, several techniques have been proposed to compile a given system model to an easy-to-diagnose model such as Decomposable Negation Normal Form~\cite{darwiche2001decomposable} and Ordered Binary Decision Diagrams (OBDDs)~\cite{torta2006onTheUse}. These compilation methods, however, sometimes result in a model that is exponentially larger than the original system model. 
 
 
-We propose a general approach that makes use of past observations to identify easy-to-diagnose diagnosis problems, based on PI Juba's recent work~\cite{juba2016aaai}. 
-The main idea is to search the space of  conditions (e.g., $k$-DNFs) over past observations, such that this condition is true in a significant (yet possibly small) amount of cases in in past observations, 
-and that in these observations finding the diagnosis is easy. 
+We propose a general approach that makes use of past observations to diagnose easy instances, based on PI Juba's recent work~\cite{juba2016aaai}. 
+The main idea is to search the space of simple candidate diagnoses (e.g., $k$-DNFs) over past observations, that are approximately the most likely possible easily verified diagnoses of a certain faulty behavior. 
 
 %that one can learn a model to diagnose them. This circumvents the general problem of learning a DDD model, while provides fast and effective solutions to a meaningful subset of the cases.
-While the theory of this approach has been outlined by PI Juba's prior work~\cite{juba2016aaai}, no empirical support for the usefulness of this theory was given. In the proposed research we will demonstrate its usefulnes on standard diagnosis benchmarks (see Section~\ref{sec:evaluation}). 
+While the theory of this approach has been outlined by PI Juba's prior work~\cite{juba2016aaai}, no empirical support for the usefulness of this theory was given. In the proposed research we will evaluate its usefulness on standard diagnosis benchmarks (see Section~\ref{sec:evaluation}). 
 
 
-In addition, it is not fully specified how to identify when finding a diagnosis is easy. 
+%In addition, it is not fully specified how to identify when finding a diagnosis is easy. 
+%% I'm not sure what the above means.
 Moreover, as the diagnosed system becomes more complex, searching the space of possible conditions will become intractable, thus suggesting more intelligent search techniques are needed. We will meet and address these challenges in the proposed research.  
 
 %it will be more difficult to search the space of conditions as well as to identify
@@ -390,7 +410,7 @@ Moreover, as the diagnosed system becomes more complex, searching the space of p
 \subsection{Planning with Obserations and an Incomplete Model}
 
 % Incomplete models is important
-In many cases, having a complete model is not possible, e.g., due to the effort of creating such a model or due to the unexpected nature of the world. A model can be incomplete in many ways. For example, in planning there may be incomplete knowledge about the acting agent's actions, which includes only part of their pre-conditions and effects. Observatiosn can play several roles in such cases of an incomplete model: as a means for learning the incomplete parts of the model, as a way to estimate which parts of the reasoning state space can be reasoned about with reasonable certainty, and finally, as a source for speeding up planning as discussed above. 
+In many cases, it is impossible to obtain a complete model, e.g., due to the effort of creating such a model or due to the unexpected nature of the world. A model can be incomplete in many ways. For example, in planning there may be incomplete knowledge about the acting agent's actions, which includes only part of their pre-conditions and effects. Observations can play several roles in such cases of an incomplete model: as a means for learning the incomplete parts of the model, as a way to estimate which parts of the reasoning state space can be reasoned about with reasonable certainty, and finally, as a source for speeding up planning as discussed above. 
 
 %Another example is the existence of exogenous events that are not represented in the model. 
 
@@ -398,13 +418,13 @@ In many cases, having a complete model is not possible, e.g., due to the effort 
 %Data about observed trajectories can play several roles in such cases of an incomplete model: as a means for learning the incomplete parts of the model, as a way to estimate which parts of the reasoning state space can be reasoned about with reasonable certainty, and finally, as a source for speeding up planning as discussed above. 
 
 % This is well-known, but lacking good theory to decide how to reason
-\subsubsection{Model Learning}
-Given the success of using machine learning to acquire the knowledge for many AI tasks, it is unsurprising that there has been much work on learning domain models for planning. But, the problem features some inherent difficulties, which manifest themselves as shortcomings of each of the major families of approaches proposed to date, either in the kinds of domains that can be captured, or in the performance of the algorithms performing the learning or planning. We discussed the tradeoffs and concessions made by most of these works (using reinforcement learning) in Section~\ref{reinforcementLearning}. Similarly, work on representing the problem as a graphical model such as a dynamic Bayes net immediately faces the structure learning problem for probabilistic graphical models~\cite[Section~19.4]{koller2009pgm}, that still has no scalable solution, except in restrictive cases such as low treewidth. In addition, Amir and Chang~\cite{amir2008} showed how to learn complete action models, but only when these could be described by constant arity rules (clauses of width bounded by a small constant, e.g., three). Since the problem is inherently hard, our work will also only solve a restricted family of learning and planning tasks. But, we will aim to propose a family of such tasks that enables us to learn enough about standard domain models to facilitate planning. We will aim to use natural assumptions about the training data in defining our family of tasks, such as that the relevant effects are exhibited in the training data.
+\paragraph{Prior work on model learning.}
+Given the success of using machine learning to acquire the knowledge for many AI tasks, it is unsurprising that there has been much work on learning domain models for planning. But, the problem features some inherent difficulties, which manifest themselves as shortcomings of each of the major families of approaches proposed to date, either in the kinds of domains that can be captured, or in the performance of the algorithms performing the learning or planning. We discussed the tradeoffs and concessions made by most of these works (using reinforcement learning) in Section~\ref{reinforcementLearning}. Similarly, work on representing the problem as a graphical model such as a dynamic Bayes net immediately faces the structure learning problem for probabilistic graphical models~\cite[Section~19.4]{koller2009pgm}, that still has no scalable solution, except in restrictive cases such as low treewidth. Meanwhile, Amir and Chang~\cite{amir2008} showed how to learn complete action models, but only when these could be described by constant arity rules (clauses of width bounded by a small constant, e.g., three). Since the problem is inherently hard, our work will also only solve a restricted family of learning and planning tasks. But, we will aim to propose a family of such tasks that enables us to learn enough about standard domain models to facilitate planning. We will aim to use natural assumptions about the training data in defining our family of tasks, such as that the relevant effects are exhibited in the training data.
 
 %While work on reasoning with incomplete models and observations has been discussed ... \note{Roni: we need some strong arguments against what's been done}
 
 
-We propose to address this setting by using Valiant's PAC semantics~\cite{valiant2000robustLogics}, a particular theoretical framework that is exactly aimed to bridge the gap between having observations to learn from and learning an incomplete and only probably correct model. We will develop concrete algorithms able to perform reasoning tasks -- and in particular planning and diagnosis -- using an underlying PAC semantic knowledge base. 
+We propose to address this setting by using Valiant's PAC semantics~\cite{valiant2000robustLogics}, a theoretical framework that aims to bridge the gap between having observations and learning an incomplete and only probably correct model. We will develop algorithms to perform reasoning tasks using an underlying knowledge base with PAC semantics. 
 
 %\note{Roni: something about how PAC semantic are great in balancing knowledge}
 
@@ -413,40 +433,40 @@ We propose to address this setting by using Valiant's PAC semantics~\cite{valian
 
 
 \subsubsection{Learning PAC Semantic Rules for Planning}
-Planning fundamentally deviates from the usual setting of PAC semantics in two ways. First, the objective is not merely to {\em predict} relationships between the attributes describing the environment, but to use the relationships between the {\em choice} of action and {\em resulting change} in the environment: planning is fundamentally about {\em causal relationships.} Second, these choices alter the observed states of the environment and observed changes in those states. So, using a new set of choices may potentially result in a distribution of data at ``test'' time that is entirely different from the data used for training. Such a ``nonstationary'' (``non-i.i.d.'') data distribution generally invalidates the assumptions underpinning the standard guarantees that the learned rules generalize to the test data.
+Planning fundamentally deviates from the usual setting of PAC semantics in two ways. First, the objective is not merely to {\em predict} relationships between the attributes describing the environment, but to use the relationships between the {\em choice} of action and {\em resulting change} in the environment: planning is fundamentally about {\em causal relationships,} not merely statistical ones. Second, these choices alter the observed states of the environment and observed changes in those states. So, using a new set of choices may potentially result in a distribution of data at ``test'' time that is entirely different from the data used for training. Such a ``nonstationary'' (``non-i.i.d.'') data distribution generally invalidates the assumptions underpinning the standard guarantees that the learned rules generalize to the test data.
 
 If the relevant sequences of actions have at least been represented in the training data, techniques for ``off-policy'' learning via ``importance weighting'' can be used to correct the skew induced by the plan with respect to the training distribution~\cite{precup2000off-policy,precup2001off-policy,shelton2001,peshkin2001,peshkin2002,uchibe2004,wawrzynski2009,hachiya2009,hachiya2011,juba2016jmlr}. But, these techniques {\em only} address the skew due to the choice of actions and cannot predict the effect of a new action sequence. Indeed, the problem of {\em exploring} an environment sufficiently well to learn all of the rules describing it is inherently hard: Kakade~\cite[Section~8.6]{kakade2003thesis} observes that if the environment encodes a ``combination lock,'' for example, an exponential search over the possible sequences of actions is unavoidable in order to discover the effect of the actions on the attribute describing the lock's state. Standard models such as Markov decision processes furthermore provide no guarantee that actions will continue to have the same (lack of an) effect once the environment enters a new state. The problem here can be seen as fundamentally one of {\em ``transportability''}: guaranteeing that the rules observed under one set of conditions continue to hold under new conditions. The importance weighting approach can be seen to be special cases of the formulas derived by Bareinboim and Pearl~\cite{bareinboim2012completeness,bareinboim2013algorithm}, who also describe conditions characterizing when such formulas can be given.
 
-Given the inherent difficulty of the task, we can only hope to identify a special case of such tasks under which efficient algorithms are possible. In the work by PI Juba on learning for planning~\cite{juba2016jmlr}, this difficulty was avoided by only promising to find plans that use sequences of actions that are represented in the training data. That work used a largely data-driven, implicit learning approach to learning the rules describing the actions and environment. Here, we conjecture that by identifying an explicit partial model, we can obtain transportability under some natural, less restrictive conditions that only require the individual effects, not the entire sequence of actions to be exhibited in the training set. Tentatively, we first assume that {\em actions effects are only determined by the observed attributes}, and second, that {\em the rules describing the effects of actions are frequently observable in the data distribution}. (Both of these assumptions are needed to rule out some form of ``combination lock.'') In our work, we will seek to further refine the assumptions we use, guided by the characterizations derived by Bareinboim and Pearl. Indeed, Valiant~\cite{valiant2006knowledgeInfusion} suggested that the use of explicit rules corresponds to invoking some kind of independence assumption, but did not concretely identify such conditions. We will seek to articulate a clean set of assumptions for planning.
+Given the inherent difficulty of the task, we can only hope to identify a special case of such tasks under which efficient algorithms are possible. In the work by PI Juba on learning for planning~\cite{juba2016jmlr}, this difficulty was avoided by only promising to find plans that use sequences of actions that are represented in the training data. That work used a largely data-driven, implicit learning approach to learning the rules describing the actions and environment. Here, we conjecture that by identifying an explicit partial model, we can obtain transportability under some natural, less restrictive conditions that only require the individual effects, not the entire sequence of actions to be exhibited in the training set. Tentatively, we first assume that {\em actions effects are only determined by the observed attributes}, and second, that {\em the validity of rules describing the relevant effects of actions are frequently observable in the data distribution}. (Both of these assumptions are needed to rule out some form of ``combination lock.'') In our work, we will seek to further refine the assumptions we use, guided by the characterizations derived by Bareinboim and Pearl. Indeed, Valiant~\cite{valiant2006knowledgeInfusion} suggested that the use of explicit rules corresponds to invoking some kind of independence assumption, but did not concretely identify such conditions. We will seek to articulate a clean set of assumptions for planning.
 
-The question still arises of which rules to learn. Complete descriptions of environments in standard models of planning are essentially equivalent to general DNF rules, which are believed to be hard to learn~\cite{daniely2016dnf} (even under our simplifying assumptions). But, in preliminary work, we can show that it is possible to learn the rules that are relevant for the analysis of a plan \note{Roni: I'm not sure what you mean by ``analyis of a plan''}, as long as a backwards, goal-directed algorithm is used for the analysis; for example, standard algorithms for resolution (and SAT-solvers) are of this form. Roughly, during the analysis, one simply tracks what fraction of the data is inconsistent with the current sub-goal; if no counterexamples remain, the sub-goal can be added as a learned rule. The amount of data required for soundness can be bounded using a bound on the running time of the algorithm, for example. Thus, we anticipate that the main obstacles to overcome are the identification of adequate assumptions, as discussed above, and the design of effective algorithms for finding plans, which we will discuss next.
+The question still arises of which rules to learn. Complete descriptions of environments in standard models of planning are essentially equivalent to general DNF rules, which are believed to be hard to learn~\cite{daniely2016dnf} (even under our simplifying assumptions). But, in preliminary work, we can show that it is possible to learn the rules that are relevant to prove that a plan succeeds 
+%\note{Roni: I'm not sure what you mean by ``analyis of a plan''} 
+as long as a backwards, goal-directed algorithm is used to find the proof. For example, standard algorithms for resolution (and SAT-solvers) are of this form. Roughly, the algorithm simply tracks what fraction of the data is inconsistent with the current sub-goal; if no counterexamples remain, the sub-goal can be added as a learned rule. The amount of data required for soundness can be bounded using a bound on the running time of the algorithm, for example. Thus, we anticipate that the main obstacles to overcome are the identification of adequate assumptions, as discussed above, and the design of effective algorithms for finding plans, which we will discuss next.
 
 \subsubsection{Planning with PAC Semantic Rules}
 
 
 % Having PAC rules is not the end of the problem. No one has used them for planning or diagnosis
-After learning a set of rules for planning, there is still the task of actually generating the plan. PAC semantic have been designed explicitly to enable efficient reasoning~\cite{valiant2000robustLogics}. However, they have been applied so far to a limited set of reasoning tasks such as prediction of missing words in text~\cite{michael2008first} and user profiling in a recommender system~\cite{semeraro2009knowledge}. With the the exception of the preliminary work of PI Juba~\cite{juba2016aaai,juba2016jmlr}, PAC semantic rules have not been used to neither planning nor diagnosis, two fundamental AI reasoning tasks. We aim to do so in the proposed research. 
+After learning a set of rules for planning, there is still the task of actually generating the plan. PAC semantics have been designed explicitly to enable efficient reasoning~\cite{valiant2000robustLogics}. However, they have so far been applied primarily to a limited set of reasoning tasks such as the prediction of missing words in text~\cite{michael2008first} and user profiling in a recommender system~\cite{semeraro2009knowledge}. With the the exception of the recent initial work of PI Juba~\cite{juba2016aaai,juba2016jmlr}, rules with PAC semantics have been used neither for planning nor diagnosis. We aim to develop this application in the proposed research. 
 
 
 %\note{Brendan, does the paragraph below make sense?}
 % A concrete explanation of what is a PAC semantice rule in planning
-The particular type of PAC semantic rules we aim to reason about in the context of planning capture the preconditions, effects, and/or costs of the actions the planning agent can perform. 
-That is, we will obtain from learning the set of actions $A$ that the agent is assumed to be able to perform and are useful for planning, 
-and an error function that maps every action $a\in A$ 
-to the probability that the action's preconditions and effects are true.
-Concretely, consider a STRIPS-style action $a$, which is defined by the tuple $\tuple{\pre(a), \eff(a), c(a)}$, corresponding to the preconditions, effects, and cost of $a$, respectively. The corresponding error function value $err(a)$ is the probability that (1) $a$ is applicable when $\pre(a)$ hold, (2) applying $a$ will have cause the effects in $\eff(a)$, and (3) the cost of applying $a$ is $c(a)$. 
+The particular type of rules we aim to reason about in the context of planning capture the preconditions, effects, and/or costs of the actions the planning agent can perform. 
+That is, we will learn the set of actions $A$ that the agent is assumed to be able to perform and are useful for planning, 
+and an error function that bounds, for every action $a\in A$, 
+the probability that the learned preconditions and effects hold for $a$.
+Concretely, consider a STRIPS-style action $a$, which is defined by the tuple $\tuple{\pre(a), \eff(a), c(a)}$, corresponding to the preconditions, effects, and cost of $a$, respectively. The corresponding error value $err(a)$ gives a lower bound on the probability that (1) $a$ is applicable when $\pre(a)$ hold, (2) applying $a$ will have cause the effects in $\eff(a)$, and (3) the cost of applying $a$ is $c(a)$. 
 
 
 
 % Planning with PAC rules is not trivial
-Planning with such PAC semantic rules raises several challenges and opens several possible types of planning problems.
-Since every planned action may not have its desired effect (since the learned rules are only probably approxiamtely correct)
-then one may wish to generate a plan that will achieve the goal with some amount of certaintly. In addition, it is often desired that the cost of the resulting plan (sum of the costs of its constituent actions) is minimized. A natural some tradeoff between the plan's cost  and its probability of success exists. 
-
+Planning with such rules using PAC semantics raises several challenges and opens several possible types of planning problems.
+Since every planned action may not have its desired effect (since the learned rules are only probably approximately correct)
+then one may wish to generate a plan that will achieve the goal with some amount of certainty. In addition, it is often desired that the cost of the resulting plan (sum of the costs of its constituent actions) is minimized. There is a natural tradeoff between the plan's cost  and its probability of success. 
 % Our approach: build on existing planners, link to PAC search framework we developed
-A natural framework for balancing success probability and solution cost 
-is the PAC search framework described above. 
-Therefore, proposing intelligent planning algorithm that balances this trandeoff, which arises when using learned PAC semantic rules as actions, is a main objective of this proposed research. 
+Balancing the tradeoff that arises from the use of learned rules is another one of our objectives. One natural framework for balancing success probability and solution cost is the PAC search framework described above. 
+ 
 
 %Our approach will build on  existing planners and approaches for probabilistic contignet planningand 
 
@@ -454,9 +474,9 @@ Therefore, proposing intelligent planning algorithm that balances this trandeoff
 
 
 %\note{Roni: this should probably go into the scientific background}
-Of course, planning that considers both uncerainty and plan cost is well-studied. Perhaps the most rich model for planning with uncertainty is the Partially Observable Markov Decision Problem (POMDP)~\cite{cassandra1994acting}
+Of course, planning that considers both uncertainty and plan cost is well-studied. Perhaps the richest model for planning with uncertainty is the Partially Observable Markov Decision Problem (POMDP)~\cite{cassandra1994acting}
 model, in which agent's actions may have a set of possible outcomes and the agent may not know its current state with certainty. 
-In POMDP, a transition function and an observation function are assumed to be given, which map the probability of reaching a state and obtaining an observation, respectively, given that the agent performed a given action in a given state. Having such an accurate knoweldge about the world's uncertainty is often difficult to obtain and POMDPs are nutoriously difficult to solve and POMDP solvers usually do not scale. %~\cite{todo}. 
+In a POMDP, a transition function and an observation function are given, which indicate the probability of reaching a state and obtaining an observation, respectively, given that the agent performed a given action in a given state. Having such an accurate knowledge about the world's uncertainty is often difficult to obtain. Moreover, POMDPs are notoriously difficult to solve and POMDP solvers usually do not scale. %~\cite{todo}. 
 Thus, ``weaker'' models of uncertainty have also been studied. 
 For example, {\em conformant planning}~\cite{hoffmann2006conformant,cimatti2004conformant,cimatti1999conformant} is the task of generating a plan to reach a goal when the actions have non-deterministic effects
 and the initial state is unknown. The desired plan in conformant planning must guarantee that the goal is achieved without any observations collected while executing it. Contingent planning~\cite{hoffmann2005contingent,majercik2003contingent} addresses a similar setting, but the task is to generate a conditional plan, deciding in run time which actions to perform by considering collected observations. 
@@ -465,15 +485,14 @@ in which the goal is to maximize the probability of success~\cite{blum1999probab
 or to come up with a plan that achieves the goal with probability that success exceeds the threshold~\cite{kushmerick1995algorithm}.
 
 % Differential 
-All the above shows the maturity of the planning literature 
-and we intend to build on these success stories when developing our  planning algorithms. However, there are some key differences 
-when planning with learned PAC semantic rules. First, we do not expect realistially to be able to learn a full-fledged POMDP model for problems that are not very small. Indeed, learning POMDP models have been studied in the reinforcement learning literature and are known be difficult to scale. 
-Second, we deal with two sources of uncertainty -- the actions may not even be applicable and their outcome may be different than planned. In some sense, this is similar to the weak-fault model setting mentioned above in the context of diagnosis -- we do not assume to know what will happen if the action will fail. Perhaps the closest setting is that of probabilistic contingent planning, but planning cost has rarely been addressed in this scenario. 
-
+%All the above shows the maturity of the planning literature and 
+We intend to build on these success stories when developing our  planning algorithms. However, there are some key differences 
+when planning with learned PAC semantic rules. First, we do not expect to be able to learn a full-fledged POMDP model for problems that are not very small. Indeed, as we discussed in Section~\ref{reinforcementLearning}, learning POMDP models is well-studied and known be inherently difficult. 
+Second, we deal with two sources of uncertainty -- the actions may not even be applicable and their outcome may be different than planned. In some sense, this is similar to the weak-fault model setting mentioned above in the context of diagnosis -- we do not assume to know what will happen if the action will fail. Perhaps the closest setting is that of probabilistic contingent planning, but planning cost has rarely been addressed in this scenario. We note that the initial work by PI Juba pursues such directions~\cite{juba2016jmlr}, but is limited by the need for example trajectories that contain the sequences of actions we may use in a plan. We propose to develop algorithms that do not suffer this restriction.
 
 % This is more than just another planning algorithms - we are ``closing the loop'' of planning and learning
-By developing effective planning algorithms able to use learned PAC semantic rules is useful on its own right, as one can imagine other ways in which actions that are only applicable with some probability can arise. However, 
-it is important to demonstrate this specifically in the proposed research, to show that learning PAC semantic rules form a viable holistic solution to the problem of planning with an incomplete model. 
+%Effective planning algorithms able to use learned PAC semantic rules are useful in their own right, as one can imagine other ways in which there may arise actions that are only applicable or successful with some probability. 
+%However, it is important to demonstrate this specifically in the proposed research, to show that learning PAC semantic rules form a viable holistic solution to the problem of planning with an incomplete model. 
 
 
 
@@ -491,13 +510,13 @@ it is important to demonstrate this specifically in the proposed research, to sh
 
 
 % In MBD we're used to incomplete models, but the approximate models are harder for us. But still, we rock at reasoning, so what should we do?
-Since modeling is known to be very difficult in model-based diagnosis, much of the MBD literature has dealt with weak types of model. One such well-studied weak type of model is the {\em weak fault model} (WFM), in which only the nominal behavior of the components is modeled while there is no knowledge of how components behave when they are faulty. However, even such a weak fault model is usually very difficult to obtain. Indeed, predicting {\em exactly} how components will {\em always} behave in a complex system is very difficult. In particular, obtaining component behavior rules that are always correct is very hard, and learning such rules is practically impossible in most cases. 
+Since modeling is known to be very difficult in model-based diagnosis, much of the MBD literature has dealt with weak types of models. One such well-studied weak type of model is the {\em weak fault model} (WFM), in which only the nominal behavior of the components is modeled while there is no knowledge of how components behave when they are faulty. However, even such a weak fault model is usually very difficult to obtain. Indeed, predicting {\em exactly} how components will {\em always} behave in a complex system is very difficult. In particular, obtaining component behavior rules that are always correct is very hard, and learning such rules is practically impossible in most cases. 
 On the other hand, efficient MBD algorithms have been developed over the years (some by PI Stern~\cite{metodi2014novel,stern2012exploring,stern2014hierarchical,elmishali2016dataAugmented,lazebnik2016solving}) that apply various forms of reasoning to infer diagnoses based on such models. 
 
 
 % YES! let's use PAC semantics. Rules are behaviors and their relationship with health
-We propose to leverage the power of PAC semantics to enable reasoning with incomplete and inaccurate models. The PAC semantic rules in the context of model-based diagnosis are relations between observed system behavior (e.g., sensor values) and the health of subset of the diagnosed system's components. 
-A simple example is Horn-clause type of rules, e.g., $h(A)\rightarrow (o\equiv i_1 \wedge i2)$
+We propose to leverage the power of PAC semantics to enable reasoning with incomplete and inaccurate models. The PAC semantic rules in the context of model-based diagnosis are relations between observed system behavior (e.g., sensor values) and the health of subsetd of the diagnosed system's components. 
+A simple example is Horn-clause rules, e.g., $h(A)\rightarrow (o\equiv i_1 \wedge i2)$
 where $A$ is a component in the system, $h(A)$ is a predicate denoting that $A$ is healthy, and $i_1$, $i_2$, $o$ are the input and output values of $A$, respectively. 
 Such rules are commonly used in MBD algorithms, but the novelty is the error function that is added when using PAC semantics, associating each rule with the probability that it is false. 
 
@@ -514,17 +533,17 @@ A second challenge is how to identify rules that describe an individual componen
 
 
 % Learning exactly what each component is hard, but maybe learning broader rules will be easier.
-To simplify the learning task and to be able to obtain more information from past observations, we intend to learn and reason about more complex rules than simple Horn clauses. First, we will consider rules where the left hand side consists more than a single component,  e.g., $(h(A)\wedge h(B)) \rightarrow o\equiv i_1\wedge i_2$, where $B$ is another component. Such rules are expected to be easier to learn from data, as they may require less detailed knowledge about the internals of the diagnosed system. Moreover, rules in which observed values exonerate some components from the suspicious of being fault are also possible~\cite{struss1989physical}. 
+To simplify the learning task and to be able to obtain more information from past observations, we intend to learn and reason about rules that are more complex than simple Horn clauses. First, we will consider rules where the left hand side consists more than a single component,  e.g., $(h(A)\wedge h(B)) \rightarrow o\equiv i_1\wedge i_2$, where $B$ is another component. Such rules are expected to be easier to learn from data, as they may require less detailed knowledge about the internals of the diagnosed system. Moreover, there may also exist rules in which observed values exonerate some components from suspicions of being faulty~\cite{struss1989physical}. 
 Finally, rules that include both health predicates and sensor values in their left-hand side are also possible, e.g., 
 $(in_1=1 \wedge h(A) \wedge h(B))\rightarrow o\equiv 1$. Existing MBD algorithms are capable of reasoning with all these types of rules to obtain consistent diagnoses. 
 
 
 % Statement of operation: we will reason about rules that are only sometimes true
-However, most MBD algorithm do not reason about the likelihood that the rules they use for reasoning -- i.e., the system model -- may be incorrect. A key objective in the proposed research is to study exactly this: develop MBD algorithm that are able to reason with PAC 
-semantic rules. 
+However, most MBD algorithms do not reason about the likelihood that the rules they use for reasoning -- i.e., the system model -- may be incorrect. A key objective in the proposed research is to study exactly this and develop MBD algorithms that are able to reason with rules using PAC 
+semantics. 
 
 % The problem 
-Concretely, the diagnostic challenge to find the most likely diagnosis (or a set of highly likely diagnoses) given a set of rules that describe various relations between observed system behavior and components' health, such that each rule is associated with a probability that it is true, referred to as the rule's {\em validity}. 
+Concretely, the diagnostic challenge is to find the most likely diagnosis (or a set of highly likely diagnoses) given a set of rules that describe various relations between observed system behavior and components' health, such that each rule is associated with a probability that it is true, referred to as the rule's {\em validity}. 
 
 % Why it is not trivial
 A simple approach can be to limit the diagnosis algorithm to only use rules whose validity is over some given value. This approach has several drawbacks. First, there is no principled way to set this threshold. Second, this approach can result in suboptimal results, as follows. 
@@ -533,11 +552,10 @@ Now, imagine that there are two diagnoses $\omega_1$ and $\omega_2$, such that $
 if we assume that rules likelihoods are independent, than clearly $\omega_2$ is more likely. But, if we set the rules threshold to 0.75, our diagnosis algorithm will not find $\omega_2$. 
 
 % We will solve it!
-Thus, when diagnosing with PAC semantic rules,  the likelihood of a diagnosis is affected by  the validity of the rules used to infer it as well as any other prior knowledge about the components failure likelihood (such as the learned priors discussed in earlier in this proposal). We will develop diagnosis algorithms based on heuristic search that search for the most likely diagnoses in this setting. Developing these algorithms as well as appropriate heuristic is part of the proposed research. 
-
+Thus, when diagnosing with PAC semantic rules,  the likelihood of a diagnosis is affected by  the validity of the rules used to infer it as well as any other prior knowledge about the components failure likelihood (such as the learned priors discussed in earlier in this proposal). We will develop diagnosis algorithms based on heuristic search that search for the most likely diagnoses in this setting, as well as appropriate heuristics.
 
 % Diagnosis for physical systems
-Above, we have implicitly assumed that logical rules can be learned to approximately represent the  diagnosed. However, systems may be too complex to be represented in logical, qualitative means. In such cases, the learned rules will include learning functions that approximate some parts of the system behavior. While learning a complete model of a physical system is bound to be futile, we will aim for learning cases that are common enough and can be approximated by a learned function. A preliminary framework for how to do so was recently outlined by PI Juba~\cite{juba2016aaai,juba2016conditional}.
+Above, we have implicitly assumed that logical rules can be learned to approximately represent the system. However, systems may be too complex to be represented by simple logical rules. In such cases, we may also learn rules that {\em approximate} some parts of the system behavior. While learning a complete model of a physical system is bound to be futile, we will aim for learning cases that are common enough and can be approximated by a learned function. A preliminary framework for how to do so was recently outlined by PI Juba~\cite{juba2016aaai,juba2016conditional}.
 
 
 
@@ -551,9 +569,9 @@ As in planning, the merit of developing diagnosis algorithm able to reason with 
 
 %Beyond developing the theoretical understanding of the roles of models and observations in planning and in diagnosis, an important outcome of the proposed research is applicable planning algorithms and diagnosis algorithms that can outperform the state-of-the-art. This objective is feasible as we will exploit both model and observations, while most planning algorithms and diagnosis algorithms are not designed to take both into account. 
 
-To evaluate the developed planning algorithms, we will compare them against state-of-the-art domain-indpenedant planning algorithms, over standard planning benchmark such as those given in the FastDownward planning system~\cite{helmert2006fast} (available at \url{http://www.fast-downward.org}). In addition, we will also experiment on domain-specific planning problems such as the multi-agent path finding problem, which has been deeply studied by PI Stern. 
+To evaluate the developed planning algorithms, we will compare them against state-of-the-art domain-independent planning algorithms over standard planning benchmarks, such as those given in the FastDownward planning system~\cite{helmert2006fast} (available at \url{http://www.fast-downward.org}). In addition, we will also experiment on domain-specific planning problems such as the multi-agent path finding problem, which has been deeply studied by PI Stern. 
 
-Similarly, we will evalate the developed MBD algorithms over standard MBD benchmarks such as Boolean circuits~\cite{hansen1999unveiling,brglez1999design}. An additional domain we will experiment on is software diagnoses, where we will experiment on data form open source projects, such as the data used by Elmishali et al.~\cite{elmishali2016dataAugmented}. 
+Similarly, we will evaluate the developed MBD algorithms over standard MBD benchmarks such as Boolean circuits~\cite{hansen1999unveiling,brglez1999design}. An additional domain we will experiment on is software diagnoses, where we will experiment on data from open source projects, such as the data used by Elmishali et al.~\cite{elmishali2016dataAugmented}. 
 
 To evaluate the planning and diagnosis algorithms designed for the partial model setting, we will introduce ``noise'' or mask part of the model in the benchmarks described above. Then, we will compare against model-based methods that only reason about the noisy model, and data-driven methods that ignore the available partial model. %attempt to directly answer the quetion (not sure this fits for planning, but it does for diagnosis and plan recognition), data-driven methods that learn an model and then apply reasoning, and then some new methods by us that integrate all these things nicely. 
 
@@ -564,16 +582,16 @@ To evaluate the planning and diagnosis algorithms designed for the partial model
 
 \section{Collaboration between the Principal Investigators}
 PI Juba and PI Stern met when they were both post-doctoral fellows as the School of Engineering and Applied Sciences (SEAS) in Harvard University. 
-While PI Juba and PI Stern study very different aspects of the broad Artificial Intelligence fields, they have had during that time many scientific discussions on some of the topics discussed in this proposal. However, PI Stern soon returned to Israel for a faculty position at BGU, before these discussions could mature into a fruitful scientific collaboration. 
+While PI Juba and PI Stern study very different aspects of Artificial Intelligence, during that time they had many scientific discussions on some of the topics discussed in this proposal. However, PI Stern soon returned to Israel for a faculty position at BGU, before these discussions could mature into a fruitful scientific collaboration. 
 Throughout the years, the PIs have met in general AI conferences
 and recently their research interests have aligned, 
-with the recent work of PI Juba on the theoretical foundation of learning for planning and abductive reasoning, and the years of experience in developing planning and diagnosis (a form of abductive reasoning) algorithms. 
+with the recent work of PI Juba on the theoretical foundations of learning for planning and abductive reasoning, and the years of experience of PI Stern in developing planning and diagnosis (a form of abductive reasoning) algorithms. 
 Both PIs are young researchers and hope to develop this joint interest to a long-term collaboration on the fundamental topics outlined in this proposal, but funding is needed to support it.  
 
 %5. From BSF guidelines: An account of available U.S. and Israeli resources, including all personnel and equipment relevant to the research;
 \section{Available U.S. and Israeli Resources}
-One Ph.D student and one Master’s students from PI Stern’s group, which currently includes 3 Ph.D. and 10 Master's students, will participate in the proposed research. 
-\note{Roni: Brendan, please fill in your estimate of how many people will work on the project. From our discussion on budget I think you aim for one student, right?}
+One Ph.D. student and one Master’s student from PI Stern’s group, which currently includes three Ph.D. and ten Master's students, will participate in the proposed research. PI Juba is recruiting one Ph.D. student to work on such topics.
+%\note{Roni: Brendan, please fill in your estimate of how many people will work on the project. From our discussion on budget I think you aim for one student, right?}
 The facilities available at BGU for PI Stern’s
 lab will be available for this research, including basic office facilities and a server for performing heavy duty computations. BGU and WUSTL will provide the facilities for holding the annual research meetings.
 
