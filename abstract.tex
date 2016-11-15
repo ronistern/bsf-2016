@@ -42,22 +42,29 @@
         \and Brendan Juba \\ Computer Science, Washington University in St. Louis}
 \maketitle
 
+
 % There are two main approached: model-based and data-drive 
-Research in Artificial Intelligence is torn between two general approaches: the traditional AI approach that assume a model of the world is given and {\bf reasons} about it, and the data-driven  approach that builds on the growing availability of data and {\bf learns} from it how to handle future events. For example, classical planning algorithms 
-employ a model-based approach through the well-known ``frame axioms'' assumed by STRIPS planners. In contrast, popular reinforcement learning algorithms do not even try to model the environment, and learn directly how to act. Both approaches -- model-based and data-driven -- have pros and cons: model-based methods are used when a reliable model of the world is given while 
-data-driven methods are usually used when observations of past activities are given instead of such a model. % and model-based methods are used when a reliable model of the world is given and are usually applied suited for different settings. 
-%In general, one can say that the model-based approaches are often more principled and allow stronger claims about the performance of the underlying algorithms (e.g., optimality). However, as countless applications have discovered, having an accurate model of the world is very difficult. These are not needed by data-driven methods, which are also often much faster than the model-based methods. 
+%Automated planning and automated diagnosis (DX) are long term goals of Artificial Intelligence (AI) research, with many practical applications. Model-based algorithms for these problems assume a model of the world is given and {\bf reasons} about it. Data-driven algorithms builds on the growing availability of data and {\bf learns} from it how to handle future events. For example, classical planning algorithms employ a model-based approach through the well-known ``frame axioms'' assumed by STRIPS planners. In contrast, popular reinforcement learning algorithms do not even try to model the environment, and learn directly how to act. Both approaches -- model-based and data-driven -- have pros and cons and are popular in different contexts. 
+
+
+% We aim for the middle ground
+% Our goal: when to use which and why We propose to develop a data-and-model driven approach for solving planning problems and diagnosis problems, that uses both sources of information (model and observations) in a principled way. This includes laying the theoretical foundation for properly To this end we will study the assumptions re This data-and-model driven approach will enjoy the complementary benefits of model-based and data-driven techniques, and we will demonstrate this by developing effective planing and diagnosis algorithms. 
 
 
 
-% Data driven is not always great, and model-based is not always great. Here lays the challenge
-%Clearly, if there is no a-priori knowledge about the world model then data-driven methods are needed. On the other hand, if an accurate model of the world is available then it is wasteful to ignore it. Moreover, model-based approach provide strong theoretical guarantees in terms of completeness and solution quality (e.g., optimality) that can be difficult, if not impossible, to provide without a formal model of the world. 
+
+
+% There are two main approached: model-based and data-drive 
+Research in Artificial Intelligence is torn between two general approaches: the traditional AI approach that assumes a model of the world is given and {\bf reasons} about it, and the data-driven  approach that builds on the growing availability of data and {\bf learns} from it how to handle future events. For example, classical planning algorithms employ a model-based approach through the well-known ``frame axioms'' assumed by STRIPS planners. In contrast, popular reinforcement learning algorithms do not even try to model the environment, and learn directly how to act. Both approaches -- model-based and data-driven -- have pros and cons: model-based methods are used when a reliable model of the world is given while data-driven methods are usually used when observations of past activities are given instead of such a model. 
 
 
 % We aim for the middle ground
 % Our goal: when to use which and why
-In the proposed research we will explore how model-based and data-driven approaches can augment each other in the broad range of settings where both model and observations are available. We explore these model-and-observation settings for two important and well-studied problems: automated planning and automated diagnosis. 
-Our objective is to developed planning algorithms and diagnosis algorithms that enjoy the complimentary benefits of the model-based and the data-driven approaches, and use both sources of information in a principled way. 
+In the proposed research we will explore how model-based and data-driven approaches can augment each other in the broad range of settings where both models and observations are available. Our objective is to {\bf develop a data-and-model driven approach} for two important and well-studied problems: automated planning and automated diagnosis. This includes a theory of the potential use of a model and past observations, as well as practical state-of-the-art planning algorithms and diagnosis algorithms that enjoy the complementary benefits of data-driven and model-based approaches. 
+
+
+
+%In the proposed research we will explore how model-based and data-driven approaches can augment each other in the broad range of settings where both model and observations are available. We explore these model-and-observation settings for two important and well-studied problems: automated planning and automated diagnosis. Our objective is to developed planning algorithms and diagnosis algorithms that enjoy the complimentary benefits of the model-based and the data-driven approaches, and use both sources of information in a principled way. 
 
 
 \end{document}
